@@ -20,9 +20,9 @@ import {
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Practice Logger', href: '/practice-logger', icon: Target },
+  { name: 'Practice Logger', href: '/practice', icon: Target },
   { name: 'Analytics', href: '/analytics', icon: BarChart2 },
-  { name: 'AI Coach', href: '/ai-coach', icon: Brain },
+  { name: 'AI Coach', href: '/coach', icon: Brain },
   { name: 'Goals', href: '/goals', icon: CheckCircle },
   { name: 'Competitions', href: '/competitions', icon: Award },
   { name: 'Profile', href: '/profile', icon: User },
