@@ -63,9 +63,13 @@ export default function NewPracticePage() {
       setTimeout(() => {
         router.push('/practice/history');
       }, 1500);
-    } catch (err: any) {
-      setError(err.message || 'Failed to create practice session');
-    } finally {
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    setError(err.message);
+  } else {
+    setError('An error occurred during login');
+  }
+} finally {
       setLoading(false);
     }
   };

@@ -25,11 +25,15 @@ export default function ForgotPasswordPage() {
 
       setSuccess(true);
       setEmail('');
-    } catch (err: any) {
-      setError(err.message || 'An error occurred while sending the reset link');
-    } finally {
-      setLoading(false);
-    }
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    setError(err.message);
+  } else {
+    setError('An error occurred while sending the reset link');
+  }
+} finally {
+  setLoading(false);
+}
   };
 
   return (

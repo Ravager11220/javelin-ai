@@ -28,9 +28,13 @@ export default function LoginPage() {
       if (error) throw error;
 
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during login');
-    } finally {
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    setError(err.message);
+  } else {
+    setError('An error occurred during login');
+  }
+} finally {
       setLoading(false);
     }
   };

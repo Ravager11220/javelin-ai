@@ -328,7 +328,7 @@ export default function ChartsPage() {
                     <Tooltip
                       contentStyle={{ backgroundColor: '#1e293b', border: '#334155', borderRadius: '8px' }}
                       itemStyle={{ color: '#fff' }}
-                      formatter={(value: any) => `${value.toFixed(1)}m`}
+                      formatter={(value) =>`${Number(value).toFixed(1)}m`}
                     />
                     <Line type="monotone" dataKey="distance" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6' }} animationDuration={1000} />
                   </LineChart>
@@ -369,7 +369,7 @@ export default function ChartsPage() {
                     <Tooltip
                       contentStyle={{ backgroundColor: '#1e293b', border: '#334155', borderRadius: '8px' }}
                       itemStyle={{ color: '#fff' }}
-                      formatter={(value: any) => `${value.toFixed(1)}m`}
+                     formatter={(value) =>`${Number(value).toFixed(1)}m`}
                     />
                     <Bar dataKey="avgDistance" fill="#f59e0b" animationDuration={1000} radius={[4, 4, 0, 0]} />
                   </BarChart>

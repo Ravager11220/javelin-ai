@@ -24,7 +24,7 @@ const navigation = [
   { name: 'Analytics', href: '/analytics', icon: BarChart2 },
   { name: 'AI Coach', href: '/coach', icon: Brain },
   { name: 'Goals', href: '/goals', icon: CheckCircle },
-  { name: 'Competitions', href: '/competitions', icon: Award },
+  { name: 'Competition', href: '/competition', icon: Award },
   { name: 'Profile', href: '/profile', icon: User },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];

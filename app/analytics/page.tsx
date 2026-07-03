@@ -60,9 +60,7 @@ export default function AnalyticsPage() {
   const [dateRange, setDateRange] = useState<DateRange>('all');
   const [insufficientData, setInsufficientData] = useState(false);
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [dateRange]);
+  
 
   const fetchAnalytics = async () => {
     try {
@@ -153,6 +151,9 @@ export default function AnalyticsPage() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchAnalytics();
+  }, [dateRange]);
 
   const getChartData = () => {
     if (!sessions || sessions.length === 0) return null;
@@ -448,7 +449,7 @@ export default function AnalyticsPage() {
                         <Tooltip
                           contentStyle={{ backgroundColor: '#1e293b', border: '#334155', borderRadius: '8px' }}
                           itemStyle={{ color: '#fff' }}
-                          formatter={(value: any) => `${typeof value === 'number' ? value.toFixed(1) : value}m`}
+                          formatter={(value: number | string | (number | string)[]) => `${typeof value === 'number' ? value.toFixed(1) : value}m`}
                         />
                         <Bar dataKey="distance" fill="#f59e0b" animationDuration={1000} radius={[4, 4, 0, 0]} />
                       </BarChart>
@@ -468,7 +469,9 @@ export default function AnalyticsPage() {
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+                         label={({ name, percent }) =>
+  `${name} ${(Number(percent) * 100).toFixed(0)}%`
+}
                           outerRadius={80}
                           fill="#8884d8"
                           dataKey="value"
