@@ -449,12 +449,13 @@ export default function AnalyticsPage() {
                         <Tooltip
                           contentStyle={{ backgroundColor: '#1e293b', border: '#334155', borderRadius: '8px' }}
                           itemStyle={{ color: '#fff' }}
-                          formatter={(value: number | string | (number | string)[]) => `${typeof value === 'number' ? value.toFixed(1) : value}m`}
+                          formatter={(value) => `${value}m`}
                         />
                         <Bar dataKey="distance" fill="#f59e0b" animationDuration={1000} radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
+
 
                   {/* Throw Distribution - Pie Chart */}
                   <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6">
