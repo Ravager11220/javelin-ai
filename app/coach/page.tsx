@@ -48,6 +48,23 @@ interface WorkoutDay {
   description: string;
   isToday: boolean;
 }
+interface WeatherData {
+  name: string;
+  weather: {
+    main: string;
+    description: string;
+  }[];
+  main: {
+    temp: number;
+    feels_like: number;
+    humidity: number;
+  };
+  wind: {
+    speed: number;
+    deg: number;
+  };
+  visibility: number;
+}
 
 export default function CoachPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -55,6 +72,8 @@ export default function CoachPage() {
   const [practices, setPractices] = useState<Practice[]>([]);
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+
 
   useEffect(() => {
     async function fetchCoachData() {
@@ -90,15 +109,22 @@ export default function CoachPage() {
           .from('competitions')
           .select('*')
           .eq('user_id', user.id)
-          .order('competition_date', { ascending: true });
+          .order('competition_date', { ascending: true })
 
-        setCompetitions(competitionData || []);
+setCompetitions(competitionData || []);
+const weatherResponse = await fetch('/api/weather');
+
+if (weatherResponse.ok) {
+  const weatherData = await weatherResponse.json();
+  setWeather(weatherData);
+}
       } catch (error) {
         console.error('Error fetching coach data:', error);
       } finally {
         setLoading(false);
       }
     }
+    
 
     fetchCoachData();
   }, []);
@@ -130,6 +156,45 @@ export default function CoachPage() {
   };
 
   const upcomingCompetitions = competitions.filter(c => c.status === 'upcoming');
+  const weatherRecommendation = (() => {
+  if (!weather) {
+    return {
+      title: "Loading...",
+      description: "Fetching current weather conditions...",
+      status: "warning" as const,
+      statusText: "Loading"
+    };
+  }
+
+  const windSpeed = weather.wind.speed * 3.6; // Convert m/s to km/h
+  const condition = weather.weather[0].main.toLowerCase();
+
+  if (condition.includes("rain")) {
+    return {
+      title: "Indoor Training Recommended",
+      description: "Rain detected. Focus on strength, mobility, and technical drills indoors.",
+      status: "warning" as const,
+      statusText: "Rain"
+    };
+  }
+
+  if (windSpeed > 25) {
+    return {
+      title: "Strong Wind Training",
+      description: "Strong winds today. Practice release angle and throwing accuracy instead of maximum distance.",
+      status: "warning" as const,
+      statusText: "Wind"
+    };
+  }
+
+  return {
+    title: "Ideal Training Conditions",
+    description: "Weather conditions are excellent for outdoor javelin practice.",
+    status: "good" as const,
+    statusText: "Good"
+  };
+})();
+
   const averageThrow = practices.length > 0
     ? Math.round(practices.reduce((sum, p) => sum + p.average_throw, 0) / practices.length)
     : null;

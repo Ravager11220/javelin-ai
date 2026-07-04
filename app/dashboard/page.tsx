@@ -6,7 +6,9 @@ import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
+import WeatherCard from '@/components/dashboard/WeatherCard';
 import { Trophy, Target, Calendar, Plus, Edit, TrendingUp } from 'lucide-react';
+
 
 interface Competition {
   id: string;
@@ -264,7 +266,13 @@ export default function DashboardPage() {
           </div>
 
           {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Weather Card */}
+<div className="mb-6">
+  <WeatherCard />
+</div>
+
+{/* Charts Section */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Practice Performance Trend Chart */}
             <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-6">
