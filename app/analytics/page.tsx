@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { Target, TrendingUp, Calendar, BarChart3, Plus, ArrowUp, ArrowDown, Filter, Trophy, Award, Zap } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { motion } from 'framer-motion';
 
 interface AnalyticsStats {
   totalSessions: number;
@@ -357,6 +358,27 @@ export default function AnalyticsPage() {
 
   const performanceSummary = getPerformanceSummary();
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-950">
       <Sidebar />
@@ -364,7 +386,12 @@ export default function AnalyticsPage() {
         <TopNavbar />
         <div className="p-4 sm:p-6 lg:p-8 pt-24">
           {/* Header */}
-          <div className="mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Analytics</h1>
@@ -384,7 +411,7 @@ export default function AnalyticsPage() {
                 </select>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Loading State */}
           {loading ? (
@@ -416,9 +443,14 @@ export default function AnalyticsPage() {
           ) : (
             <>
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+            >
               {/* Total Sessions */}
-              <div className="group relative bg-gradient-to-br from-purple-500/10 to-purple-500/5 backdrop-blur-sm rounded-2xl border border-purple-500/20 p-6 hover:border-purple-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 hover:scale-105 h-32 flex flex-col justify-between">
+              <motion.div variants={itemVariants} className="group relative bg-gradient-to-br from-purple-500/10 to-purple-500/5 backdrop-blur-sm rounded-2xl border border-purple-500/20 p-6 hover:border-purple-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 hover:scale-105 h-32 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
                     <Calendar className="w-6 h-6 text-purple-400" />
@@ -432,10 +464,10 @@ export default function AnalyticsPage() {
                   <div className="text-3xl font-bold text-white mb-1">{stats.totalSessions}</div>
                   <div className="text-slate-400 text-sm">Total Sessions</div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Personal Best */}
-              <div className="group relative bg-gradient-to-br from-blue-500/10 to-blue-500/5 backdrop-blur-sm rounded-2xl border border-blue-500/20 p-6 hover:border-blue-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 hover:scale-105 h-32 flex flex-col justify-between">
+              <motion.div variants={itemVariants} className="group relative bg-gradient-to-br from-blue-500/10 to-blue-500/5 backdrop-blur-sm rounded-2xl border border-blue-500/20 p-6 hover:border-blue-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 hover:scale-105 h-32 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
                     <Target className="w-6 h-6 text-blue-400" />
@@ -449,10 +481,10 @@ export default function AnalyticsPage() {
                   <div className="text-3xl font-bold text-white mb-1">{stats.personalBest.toFixed(1)}m</div>
                   <div className="text-slate-400 text-sm">Personal Best</div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Average Distance */}
-              <div className="group relative bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 backdrop-blur-sm rounded-2xl border border-emerald-500/20 p-6 hover:border-emerald-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-105 h-32 flex flex-col justify-between">
+              <motion.div variants={itemVariants} className="group relative bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 backdrop-blur-sm rounded-2xl border border-emerald-500/20 p-6 hover:border-emerald-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-105 h-32 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
                     <TrendingUp className="w-6 h-6 text-emerald-400" />
@@ -466,10 +498,10 @@ export default function AnalyticsPage() {
                   <div className="text-3xl font-bold text-white mb-1">{stats.averageDistance.toFixed(1)}m</div>
                   <div className="text-slate-400 text-sm">Average Distance</div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Total Distance */}
-              <div className="group relative bg-gradient-to-br from-amber-500/10 to-amber-500/5 backdrop-blur-sm rounded-2xl border border-amber-500/20 p-6 hover:border-amber-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10 hover:scale-105 h-32 flex flex-col justify-between">
+              <motion.div variants={itemVariants} className="group relative bg-gradient-to-br from-amber-500/10 to-amber-500/5 backdrop-blur-sm rounded-2xl border border-amber-500/20 p-6 hover:border-amber-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10 hover:scale-105 h-32 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
                     <BarChart3 className="w-6 h-6 text-amber-400" />
@@ -483,10 +515,10 @@ export default function AnalyticsPage() {
                   <div className="text-3xl font-bold text-white mb-1">{stats.totalDistance.toFixed(1)}m</div>
                   <div className="text-slate-400 text-sm">Total Distance</div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* This Week Sessions */}
-              <div className="group relative bg-gradient-to-br from-pink-500/10 to-pink-500/5 backdrop-blur-sm rounded-2xl border border-pink-500/20 p-6 hover:border-pink-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/10 hover:scale-105 h-32 flex flex-col justify-between">
+              <motion.div variants={itemVariants} className="group relative bg-gradient-to-br from-pink-500/10 to-pink-500/5 backdrop-blur-sm rounded-2xl border border-pink-500/20 p-6 hover:border-pink-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/10 hover:scale-105 h-32 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center">
                     <Calendar className="w-6 h-6 text-pink-400" />
@@ -500,10 +532,10 @@ export default function AnalyticsPage() {
                   <div className="text-3xl font-bold text-white mb-1">{stats.thisWeekSessions}</div>
                   <div className="text-slate-400 text-sm">This Week</div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* This Month Sessions */}
-              <div className="group relative bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 backdrop-blur-sm rounded-2xl border border-cyan-500/20 p-6 hover:border-cyan-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 hover:scale-105 h-32 flex flex-col justify-between">
+              <motion.div variants={itemVariants} className="group relative bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 backdrop-blur-sm rounded-2xl border border-cyan-500/20 p-6 hover:border-cyan-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 hover:scale-105 h-32 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
                     <Calendar className="w-6 h-6 text-cyan-400" />
@@ -517,11 +549,16 @@ export default function AnalyticsPage() {
                   <div className="text-3xl font-bold text-white mb-1">{stats.thisMonthSessions}</div>
                   <div className="text-slate-400 text-sm">This Month</div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Performance Charts Section */}
-            <div className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-8"
+            >
               <h2 className="text-2xl font-bold text-white mb-6">Performance Charts</h2>
               {insufficientData ? (
                 <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-12 text-center">
@@ -669,11 +706,16 @@ export default function AnalyticsPage() {
                   <p className="text-slate-400">Unable to generate charts with current data.</p>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* AI Performance Summary */}
             {performanceSummary && (
-              <div className="mt-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="mt-8"
+              >
                 <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
                   <Zap className="w-6 h-6 mr-2 text-purple-400" />
                   AI Performance Summary
@@ -741,7 +783,7 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+            </motion.div>
             )}
             </>
           )}

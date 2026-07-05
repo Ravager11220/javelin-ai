@@ -8,6 +8,7 @@ import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
 import WeatherCard from '@/components/dashboard/WeatherCard';
 import { Trophy, Target, Calendar, Plus, Edit, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 
 interface Competition {
@@ -145,12 +146,108 @@ export default function DashboardPage() {
         <main className="flex-1 lg:ml-64 transition-all duration-300">
           <TopNavbar />
           <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
-            <div className="text-zinc-400">Loading dashboard...</div>
+            {/* Header Skeleton */}
+            <div className="h-10 w-48 bg-slate-800/50 rounded-lg animate-pulse mb-8" />
+
+            {/* Dashboard Widgets Grid Skeleton */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Next Competition Skeleton */}
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-6 h-6 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-6 w-40 bg-slate-800/50 rounded-lg animate-pulse" />
+                </div>
+                <div className="space-y-3">
+                  <div className="h-8 w-3/4 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-4 w-1/2 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-10 w-1/3 bg-slate-800/50 rounded-lg animate-pulse mt-4" />
+                </div>
+              </div>
+
+              {/* Personal Best Skeleton */}
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-6 h-6 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-6 w-32 bg-slate-800/50 rounded-lg animate-pulse" />
+                </div>
+                <div className="h-12 w-24 bg-slate-800/50 rounded-lg animate-pulse" />
+              </div>
+
+              {/* Recent Practice Skeleton */}
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-6 h-6 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-6 w-36 bg-slate-800/50 rounded-lg animate-pulse" />
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="h-16 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-16 bg-slate-800/50 rounded-lg animate-pulse" />
+                </div>
+              </div>
+
+              {/* Quick Actions Skeleton */}
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-6 h-6 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-6 w-32 bg-slate-800/50 rounded-lg animate-pulse" />
+                </div>
+                <div className="space-y-3">
+                  <div className="h-12 w-full bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-12 w-full bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-12 w-full bg-slate-800/50 rounded-lg animate-pulse" />
+                </div>
+              </div>
+            </div>
+
+            {/* Weather Card Skeleton */}
+            <div className="h-48 bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8 animate-pulse" />
+
+            {/* Charts Section Skeleton */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Practice Performance Trend Skeleton */}
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-6 h-6 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-6 w-48 bg-slate-800/50 rounded-lg animate-pulse" />
+                </div>
+                <div className="h-64 bg-slate-800/50 rounded-lg animate-pulse" />
+              </div>
+
+              {/* Competition Status Skeleton */}
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-6 h-6 bg-slate-800/50 rounded-lg animate-pulse" />
+                  <div className="h-6 w-40 bg-slate-800/50 rounded-lg animate-pulse" />
+                </div>
+                <div className="h-64 bg-slate-800/50 rounded-lg animate-pulse" />
+              </div>
+            </div>
           </div>
         </main>
       </div>
     );
   }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-950">
@@ -158,12 +255,24 @@ export default function DashboardPage() {
       <main className="flex-1 lg:ml-64 transition-all duration-300">
         <TopNavbar />
         <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
-          <h1 className="text-3xl font-bold text-white mb-8">Dashboard</h1>
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl font-bold text-white mb-8"
+          >
+            Dashboard
+          </motion.h1>
 
           {/* Dashboard Widgets Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
+          >
             {/* Next Competition */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Trophy className="w-6 h-6 text-purple-400" />
                 <h2 className="text-xl font-semibold text-white">Next Competition</h2>
@@ -187,10 +296,10 @@ export default function DashboardPage() {
               ) : (
                 <p className="text-zinc-400">No upcoming competitions.</p>
               )}
-            </div>
+            </motion.div>
 
             {/* Personal Best */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Target className="w-6 h-6 text-blue-400" />
                 <h2 className="text-xl font-semibold text-white">Personal Best</h2>
@@ -203,10 +312,10 @@ export default function DashboardPage() {
               ) : (
                 <p className="text-zinc-400">No personal best recorded yet.</p>
               )}
-            </div>
+            </motion.div>
 
             {/* Recent Practice */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <TrendingUp className="w-6 h-6 text-green-400" />
                 <h2 className="text-xl font-semibold text-white">Recent Practice</h2>
@@ -231,10 +340,10 @@ export default function DashboardPage() {
               ) : (
                 <p className="text-zinc-400">No practice sessions recorded yet.</p>
               )}
-            </div>
+            </motion.div>
 
             {/* Quick Actions */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Plus className="w-6 h-6 text-orange-400" />
                 <h2 className="text-xl font-semibold text-white">Quick Actions</h2>
@@ -262,19 +371,30 @@ export default function DashboardPage() {
                   <span>Edit Profile</span>
                 </Link>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Charts Section */}
           {/* Weather Card */}
-<div className="mb-6">
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5, delay: 0.4 }}
+  className="mb-6"
+>
   <WeatherCard />
-</div>
+</motion.div>
 
 {/* Charts Section */}
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<motion.div
+  variants={containerVariants}
+  initial="hidden"
+  animate="visible"
+  transition={{ delay: 0.5 }}
+  className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+>
             {/* Practice Performance Trend Chart */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-6">
                 <TrendingUp className="w-6 h-6 text-green-400" />
                 <h2 className="text-xl font-semibold text-white">Practice Performance Trend</h2>
@@ -348,10 +468,10 @@ export default function DashboardPage() {
                   No practice data available.
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Competition Status Pie Chart */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-6">
                 <Trophy className="w-6 h-6 text-purple-400" />
                 <h2 className="text-xl font-semibold text-white">Competition Status</h2>
@@ -426,8 +546,8 @@ export default function DashboardPage() {
                   No competition data available.
                 </div>
               )}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </main>
     </div>

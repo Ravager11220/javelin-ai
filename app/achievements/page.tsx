@@ -21,6 +21,7 @@ import {
   Crown
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { motion } from 'framer-motion';
 
 interface Practice {
   id: string;
@@ -404,6 +405,27 @@ export default function AchievementsPage() {
   const totalCount = achievements.length;
   const completionPercentage = Math.round((unlockedCount / totalCount) * 100);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-950">
       <Sidebar />
@@ -411,14 +433,19 @@ export default function AchievementsPage() {
         <TopNavbar />
         <div className="p-4 sm:p-6 lg:p-8 pt-24">
           {/* Header */}
-          <div className="mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Achievements</h1>
                 <p className="text-slate-400">Track your progress and unlock rewards</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {loading ? (
             <div className="space-y-6">
@@ -432,7 +459,12 @@ export default function AchievementsPage() {
           ) : (
             <>
               {/* Level & XP Section */}
-              <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm rounded-2xl border border-purple-500/30 p-6 mb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm rounded-2xl border border-purple-500/30 p-6 mb-8"
+              >
                 <div className="flex flex-col sm:flex-row items-center gap-6">
                   {/* Level Badge */}
                   <div className="relative">
@@ -490,7 +522,7 @@ export default function AchievementsPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Empty State */}
               {achievements.length === 0 ? (
@@ -509,7 +541,12 @@ export default function AchievementsPage() {
               ) : (
                 <>
                   {/* Achievement Categories */}
-                  <div className="mb-6">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="mb-6"
+                  >
                     <h2 className="text-2xl font-bold text-white mb-4">Hall of Achievements</h2>
                     <div className="flex flex-wrap gap-2">
                       {['practice', 'competition', 'consistency', 'milestone'].map((category) => (
@@ -521,13 +558,20 @@ export default function AchievementsPage() {
                         </button>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Achievements Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: 0.4 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                  >
                     {achievements.map((achievement) => (
-                      <div
+                      <motion.div
                         key={achievement.id}
+                        variants={itemVariants}
                         className={`
                           relative bg-gradient-to-br ${getCategoryColor(achievement.category)}
                           backdrop-blur-sm rounded-2xl border p-6
@@ -614,9 +658,9 @@ export default function AchievementsPage() {
                             </div>
                           </div>
                         )}
-                      </div>
+                      </motion.div>
                     ))}
-                  </div>
+                  </motion.div>
                 </>
               )}
             </>

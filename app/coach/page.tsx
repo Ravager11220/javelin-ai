@@ -6,6 +6,7 @@ import { User } from '@supabase/supabase-js';
 import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
 import { Dumbbell, Moon, Target, Calendar, CheckCircle, Clock, AlertTriangle, Trophy, TrendingUp, Award, Activity, Brain, Zap, Heart, StretchHorizontal, Play, Coffee, ArrowUp, Minus, ArrowDown, Lightbulb, Shield, AlertOctagon, BarChart3, Flame, Sparkles, CheckCircle2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface RecommendationCard {
   icon: React.ReactNode;
@@ -1033,6 +1034,27 @@ if (weather && weather.wind.speed * 3.6 > 25) {
 
   const recommendations = generateRecommendations();
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen bg-slate-950">
@@ -1066,15 +1088,25 @@ if (weather && weather.wind.speed * 3.6 > 25) {
         <TopNavbar />
         <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
           {/* Header */}
-          <div className="mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
             <h1 className="text-3xl font-bold text-white mb-2">AI Coach</h1>
             <p className="text-zinc-400">Personalized training recommendations powered by your athlete data.</p>
-          </div>
+          </motion.div>
 
           {/* Dashboard Summary */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
             {/* AI Readiness Score */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 sm:col-span-2 lg:col-span-4">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 sm:col-span-2 lg:col-span-4">
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 {/* Circular Progress Indicator */}
                 <div className="relative w-32 h-32 flex-shrink-0">
@@ -1136,9 +1168,9 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
             {/* Personal Best */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
                   <Award className="w-6 h-6 text-purple-400" />
@@ -1150,10 +1182,10 @@ if (weather && weather.wind.speed * 3.6 > 25) {
               ) : (
                 <p className="text-zinc-500">Not set</p>
               )}
-            </div>
+            </motion.div>
 
             {/* Total Practice Sessions */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
                   <Activity className="w-6 h-6 text-blue-400" />
@@ -1161,10 +1193,10 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <h3 className="text-sm font-medium text-zinc-400">Total Sessions</h3>
               </div>
               <p className="text-3xl font-bold text-white">{practices.length}</p>
-            </div>
+            </motion.div>
 
             {/* Upcoming Competitions */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
                   <Trophy className="w-6 h-6 text-orange-400" />
@@ -1172,10 +1204,10 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <h3 className="text-sm font-medium text-zinc-400">Upcoming</h3>
               </div>
               <p className="text-3xl font-bold text-white">{upcomingCompetitions.length}</p>
-            </div>
+            </motion.div>
 
             {/* Average Throw Distance */}
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
+            <motion.div variants={itemVariants} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-green-400" />
@@ -1187,11 +1219,16 @@ if (weather && weather.wind.speed * 3.6 > 25) {
               ) : (
                 <p className="text-zinc-500">No data</p>
               )}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Competition Countdown Card */}
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8"
+          >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
                 <Trophy className="w-6 h-6 text-orange-400" />
@@ -1219,10 +1256,15 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <p className="text-zinc-400">No upcoming competitions. Create one to receive personalized preparation advice.</p>
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Practice Consistency Card */}
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8"
+          >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
                 <BarChart3 className="w-6 h-6 text-blue-400" />
@@ -1273,10 +1315,15 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 />
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* AI Performance Prediction Card */}
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8"
+          >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-purple-400" />
@@ -1329,10 +1376,15 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <p className="text-zinc-400">{performancePrediction.explanation}</p>
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Personalized AI Coach Card */}
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8"
+          >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-xl flex items-center justify-center">
                 <Brain className="w-6 h-6 text-purple-400" />
@@ -1398,7 +1450,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 </ul>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Recommendations Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1430,9 +1482,19 @@ if (weather && weather.wind.speed * 3.6 > 25) {
           </div>
 
           {/* Weekly Training Plan */}
-          <div className="mt-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="mt-8"
+          >
             <h2 className="text-2xl font-bold text-white mb-6">Weekly Training Plan</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            >
               {weeklyPlan.map((workout, index) => (
                 <div
                   key={index}
@@ -1466,11 +1528,16 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                   <p className="text-sm text-zinc-400">{workout.description}</p>
                 </div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* AI Insights Panel */}
-          <div className="mt-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="mt-8"
+          >
             <h2 className="text-2xl font-bold text-white mb-6">AI Insights</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Performance Trend */}
@@ -1579,7 +1646,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 )}
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </main>
     </div>
