@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   MessageSquare,
+  Trophy,
 } from 'lucide-react';
 
 const navigation = [
@@ -26,6 +27,7 @@ const navigation = [
   { name: 'AI Coach', href: '/coach', icon: Brain },
   { name: 'AI Chat Coach', href: '/ai-chat', icon: MessageSquare },
   { name: 'Goals', href: '/goals', icon: CheckCircle },
+  { name: 'Achievements', href: '/achievements', icon: Trophy },
   { name: 'Competition', href: '/competition', icon: Award },
   { name: 'Profile', href: '/profile', icon: User },
   { name: 'Settings', href: '/settings', icon: Settings },
