@@ -162,28 +162,30 @@ if (weatherResponse.ok) {
       title: "Loading...",
       description: "Fetching current weather conditions...",
       status: "warning" as const,
-      statusText: "Loading"
+      statusText: "Loading",
     };
   }
 
-  const windSpeed = weather.wind.speed * 3.6; // Convert m/s to km/h
+  const windSpeed = weather.wind.speed * 3.6;
   const condition = weather.weather[0].main.toLowerCase();
 
   if (condition.includes("rain")) {
     return {
       title: "Indoor Training Recommended",
-      description: "Rain detected. Focus on strength, mobility, and technical drills indoors.",
+      description:
+        "Rain detected. Focus on strength, mobility, and technical drills indoors.",
       status: "warning" as const,
-      statusText: "Rain"
+      statusText: "Rain",
     };
   }
 
   if (windSpeed > 25) {
     return {
       title: "Strong Wind Training",
-      description: "Strong winds today. Practice release angle and throwing accuracy instead of maximum distance.",
+      description:
+        "Strong winds today. Practice release angle and throwing accuracy instead of maximum distance.",
       status: "warning" as const,
-      statusText: "Wind"
+      statusText: "Wind",
     };
   }
 
@@ -191,10 +193,9 @@ if (weatherResponse.ok) {
     title: "Ideal Training Conditions",
     description: "Weather conditions are excellent for outdoor javelin practice.",
     status: "good" as const,
-    statusText: "Good"
+    statusText: "Good",
   };
 })();
-
   const averageThrow = practices.length > 0
     ? Math.round(practices.reduce((sum, p) => sum + p.average_throw, 0) / practices.length)
     : null;
@@ -490,12 +491,29 @@ if (weatherResponse.ok) {
     // TRAINING RECOMMENDATION
     const nextCompetition = upcomingCompetitions[0];
     let trainingRec: RecommendationCard;
+    // Weather takes priority
+if (weather && weather.wind.speed * 3.6 > 25) {
+  trainingRec = {
+    icon: <AlertTriangle className="w-6 h-6 text-yellow-400" />,
+    title: "Strong Wind Alert",
+    description:
+      "Strong winds detected. Focus on release angle, footwork, and throwing accuracy instead of maximum distance.",
+    status: "warning",
+    statusText: "Weather",
+  };
+} else {
 
     if (!nextCompetition) {
       trainingRec = {
         icon: <Dumbbell className="w-6 h-6 text-purple-400" />,
         title: 'Training Recommendation',
-        description: 'Create a competition goal to structure your training.',
+        description: weather
+  ? `Current weather: ${weather.weather[0].description}. ${
+      weather.wind.speed * 3.6 > 25
+        ? 'Strong winds detected. Focus on release angle and throwing accuracy.'
+        : 'Great conditions for outdoor training.'
+    }`
+  : 'Create a competition goal to structure your training.',
         status: 'warning',
         statusText: 'Warning',
       };
@@ -535,6 +553,7 @@ if (weatherResponse.ok) {
           statusText: 'Critical',
         };
       }
+    }
     }
     recommendations.push(trainingRec);
 
