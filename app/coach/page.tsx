@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
-import { Dumbbell, Moon, Target, Calendar, CheckCircle, Clock, AlertTriangle, Trophy, TrendingUp, Award, Activity, Brain, Zap, Heart, StretchHorizontal, Play, Coffee, ArrowUp, Minus, ArrowDown, Lightbulb, Shield, AlertOctagon } from 'lucide-react';
+import { Dumbbell, Moon, Target, Calendar, CheckCircle, Clock, AlertTriangle, Trophy, TrendingUp, Award, Activity, Brain, Zap, Heart, StretchHorizontal, Play, Coffee, ArrowUp, Minus, ArrowDown, Lightbulb, Shield, AlertOctagon, BarChart3, Flame, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface RecommendationCard {
   icon: React.ReactNode;
@@ -155,7 +155,224 @@ if (weatherResponse.ok) {
     }
   };
 
+  const getConsistencyRatingColor = (rating: string) => {
+    switch (rating) {
+      case 'Excellent':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'Good':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'Average':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'Needs Improvement':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default:
+        return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
+    }
+  };
+
+  const getTrainingLoadColor = (load: string) => {
+    switch (load) {
+      case 'Light':
+        return 'bg-green-500';
+      case 'Moderate':
+        return 'bg-blue-500';
+      case 'Heavy':
+        return 'bg-orange-500';
+      case 'Overtraining':
+        return 'bg-red-500';
+      default:
+        return 'bg-slate-500';
+    }
+  };
+
+  const getTrainingFocusIcon = (focus: string) => {
+    switch (focus) {
+      case 'Technical Throws':
+        return <Target className="w-6 h-6" />;
+      case 'Strength Session':
+        return <Zap className="w-6 h-6" />;
+      case 'Recovery & Mobility':
+        return <Heart className="w-6 h-6" />;
+      case 'Competition Simulation':
+        return <Play className="w-6 h-6" />;
+      default:
+        return <Target className="w-6 h-6" />;
+    }
+  };
+
+  const getTrainingFocusColor = (focus: string) => {
+    switch (focus) {
+      case 'Technical Throws':
+        return 'bg-purple-500/20 text-purple-400';
+      case 'Strength Session':
+        return 'bg-yellow-500/20 text-yellow-400';
+      case 'Recovery & Mobility':
+        return 'bg-pink-500/20 text-pink-400';
+      case 'Competition Simulation':
+        return 'bg-green-500/20 text-green-400';
+      default:
+        return 'bg-slate-500/20 text-slate-400';
+    }
+  };
+
+  const getRiskLevelColor = (level: string) => {
+    switch (level) {
+      case 'Low Risk':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'Moderate Risk':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'High Risk':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default:
+        return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
+    }
+  };
+
   const upcomingCompetitions = competitions.filter(c => c.status === 'upcoming');
+  
+  // Find nearest upcoming competition for countdown
+  const nearestCompetition = upcomingCompetitions.length > 0 ? upcomingCompetitions[0] : null;
+  const daysUntilCompetition = nearestCompetition
+    ? Math.ceil((new Date(nearestCompetition.competition_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : null;
+
+  // Practice Consistency Analysis
+  const calculatePracticeConsistency = () => {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const practicesLast7Days = practices.filter(p => new Date(p.date) >= sevenDaysAgo).length;
+    const practicesLast30Days = practices.filter(p => new Date(p.date) >= thirtyDaysAgo).length;
+    const averageSessionsPerWeek = practicesLast30Days / 4; // Approximate weeks in 30 days
+
+    // Consistency Rating
+    let consistencyRating: 'Excellent' | 'Good' | 'Average' | 'Needs Improvement';
+    if (averageSessionsPerWeek >= 5) {
+      consistencyRating = 'Excellent';
+    } else if (averageSessionsPerWeek >= 3) {
+      consistencyRating = 'Good';
+    } else if (averageSessionsPerWeek >= 2) {
+      consistencyRating = 'Average';
+    } else {
+      consistencyRating = 'Needs Improvement';
+    }
+
+    // Training Load Indicator
+    let trainingLoad: 'Light' | 'Moderate' | 'Heavy' | 'Overtraining';
+    if (practicesLast7Days <= 2) {
+      trainingLoad = 'Light';
+    } else if (practicesLast7Days <= 4) {
+      trainingLoad = 'Moderate';
+    } else if (practicesLast7Days <= 6) {
+      trainingLoad = 'Heavy';
+    } else {
+      trainingLoad = 'Overtraining';
+    }
+
+    return {
+      practicesLast7Days,
+      practicesLast30Days,
+      averageSessionsPerWeek: Math.round(averageSessionsPerWeek * 10) / 10,
+      consistencyRating,
+      trainingLoad,
+    };
+  };
+
+  const practiceConsistency = calculatePracticeConsistency();
+
+  // AI Performance Prediction
+  const calculatePerformancePrediction = () => {
+    const recentPractices = practices.slice(0, 10);
+    
+    if (recentPractices.length < 3) {
+      return {
+        hasEnoughData: false,
+        predictedThrow: null,
+        confidence: 0,
+        trend: 'stable' as 'improving' | 'stable' | 'declining',
+        performanceLevel: '',
+        explanation: 'Not enough data to generate a reliable prediction.',
+      };
+    }
+
+    // Calculate metrics
+    const averageThrow = recentPractices.reduce((sum, p) => sum + p.average_throw, 0) / recentPractices.length;
+    const bestThrow = Math.max(...recentPractices.map(p => p.best_throw));
+    const personalBest = profile?.personal_best || bestThrow;
+
+    // Recent trend (compare first half vs second half of recent practices)
+    const midPoint = Math.floor(recentPractices.length / 2);
+    const firstHalfAvg = recentPractices.slice(0, midPoint).reduce((sum, p) => sum + p.average_throw, 0) / midPoint;
+    const secondHalfAvg = recentPractices.slice(midPoint).reduce((sum, p) => sum + p.average_throw, 0) / (recentPractices.length - midPoint);
+    const trendFactor = (secondHalfAvg - firstHalfAvg) / firstHalfAvg;
+
+    let trend: 'improving' | 'stable' | 'declining';
+    if (trendFactor > 0.05) {
+      trend = 'improving';
+    } else if (trendFactor < -0.05) {
+      trend = 'declining';
+    } else {
+      trend = 'stable';
+    }
+
+    // Consistency score (lower variance = higher consistency)
+    const variance = recentPractices.reduce((sum, p) => Math.pow(p.average_throw - averageThrow, 2), 0) / recentPractices.length;
+    const consistencyScore = Math.max(0, 1 - (variance / (averageThrow * averageThrow))); // Normalized 0-1
+
+    // Weighted prediction algorithm
+    const recentAvgWeight = 0.5;
+    const personalBestWeight = 0.2;
+    const trendWeight = 0.2;
+    const consistencyWeight = 0.1;
+
+    const trendAdjustment = trend === 'improving' ? 1.05 : trend === 'declining' ? 0.95 : 1.0;
+    const predictedThrow = Math.round(
+      (averageThrow * recentAvgWeight) +
+      (personalBest * personalBestWeight) +
+      (averageThrow * trendAdjustment * trendWeight) +
+      (averageThrow * consistencyScore * consistencyWeight)
+    );
+
+    // Confidence based on data points and consistency
+    const dataPointsFactor = Math.min(recentPractices.length / 10, 1);
+    const confidence = Math.round((dataPointsFactor * 0.6 + consistencyScore * 0.4) * 100);
+
+    // Performance level
+    let performanceLevel = '';
+    const pbPercentage = (predictedThrow / personalBest) * 100;
+    if (pbPercentage >= 95) {
+      performanceLevel = 'Elite';
+    } else if (pbPercentage >= 85) {
+      performanceLevel = 'High';
+    } else if (pbPercentage >= 70) {
+      performanceLevel = 'Moderate';
+    } else {
+      performanceLevel = 'Developing';
+    }
+
+    // Generate explanation
+    let explanation = '';
+    if (trend === 'improving') {
+      explanation = `Based on your recent improvement trend and consistent training, you're predicted to perform at ${predictedThrow}m. Your recent average of ${Math.round(averageThrow)}m shows positive momentum.`;
+    } else if (trend === 'declining') {
+      explanation = `Your recent sessions show a slight decline. With focused training, you can reach ${predictedThrow}m. Focus on technique consistency to reverse this trend.`;
+    } else {
+      explanation = `Your performance is stable with a recent average of ${Math.round(averageThrow)}m. Maintaining your current training approach should yield a predicted performance of ${predictedThrow}m.`;
+    }
+
+    return {
+      hasEnoughData: true,
+      predictedThrow,
+      confidence,
+      trend,
+      performanceLevel,
+      explanation,
+    };
+  };
+
+  const performancePrediction = calculatePerformancePrediction();
+
   const weatherRecommendation = (() => {
   if (!weather) {
     return {
@@ -271,6 +488,132 @@ if (weatherResponse.ok) {
   };
 
   const { score: readinessScore, explanation: readinessExplanation } = calculateReadinessScore();
+
+  // Personalized AI Coach - must be after readinessScore is calculated
+  const personalizedCoach = (() => {
+    const today = new Date().getDay();
+    const dayOfWeek = today === 0 ? 6 : today - 1; // Monday = 0, Sunday = 6
+
+    // Determine training focus based on multiple factors
+    let trainingFocus: 'Technical Throws' | 'Strength Session' | 'Recovery & Mobility' | 'Competition Simulation';
+    let coachAdvice = '';
+    let riskLevel: 'Low Risk' | 'Moderate Risk' | 'High Risk';
+    let riskExplanation = '';
+    const dailyGoals: string[] = [];
+
+    // Weather considerations
+    const isRainy = !!(weather && weather.weather && weather.weather[0] && weather.weather[0].main && weather.weather[0].main.toLowerCase().includes('rain'));
+    const isWindy = !!(weather && weather.wind && (weather.wind.speed * 3.6) > 25);
+    const isBadWeather = isRainy || isWindy;
+
+    // Competition proximity
+    const daysUntilComp = daysUntilCompetition || 999;
+
+    // Training load
+    const trainingLoad = practiceConsistency.trainingLoad;
+
+    // AI readiness
+    const readiness = readinessScore;
+
+    // Generate training focus
+    if (isBadWeather) {
+      trainingFocus = 'Strength Session';
+      coachAdvice = `Due to ${isRainy ? 'rain' : 'strong winds'}, focus on indoor strength training. Work on explosive power and core stability to maintain your conditioning without risking injury in poor conditions.`;
+    } else if (daysUntilComp < 7) {
+      trainingFocus = 'Recovery & Mobility';
+      coachAdvice = `With your competition in ${daysUntilComp} days, prioritize recovery and mobility. Light stretching and visualization will keep you sharp without fatiguing your muscles before the big event.`;
+    } else if (daysUntilComp < 14) {
+      trainingFocus = 'Competition Simulation';
+      coachAdvice = `Competition is approaching in ${daysUntilComp} days. Focus on competition-specific drills and simulate match conditions to prepare mentally and physically.`;
+    } else if (trainingLoad === 'Overtraining') {
+      trainingFocus = 'Recovery & Mobility';
+      coachAdvice = `Your training load indicates overtraining. Take a recovery day with light mobility work and extra hydration to prevent burnout and injury.`;
+    } else if (trainingLoad === 'Heavy') {
+      trainingFocus = 'Recovery & Mobility';
+      coachAdvice = `You've had a heavy training week. Focus on active recovery, stretching, and light mobility to allow your muscles to repair and grow stronger.`;
+    } else if (readiness < 60) {
+      trainingFocus = 'Technical Throws';
+      coachAdvice = `Your readiness score suggests you need consistency. Focus on technical fundamentals with moderate volume to build a solid foundation and improve your overall readiness.`;
+    } else if (performancePrediction.trend === 'declining') {
+      trainingFocus = 'Technical Throws';
+      coachAdvice = `Your recent trend shows a decline. Return to basics with technical drills focusing on form and mechanics to reverse this trend and rebuild confidence.`;
+    } else if (dayOfWeek === 0 || dayOfWeek === 2 || dayOfWeek === 4) {
+      trainingFocus = 'Technical Throws';
+      coachAdvice = `Focus on technical precision today. Work on your release mechanics and follow-through to build muscle memory and consistency.`;
+    } else if (dayOfWeek === 1 || dayOfWeek === 3) {
+      trainingFocus = 'Strength Session';
+      coachAdvice = `Today is a strength day. Focus on explosive power development through plyometrics and resistance training to improve your throwing distance.`;
+    } else {
+      trainingFocus = 'Recovery & Mobility';
+      coachAdvice = `Take a recovery day to allow your body to adapt to the training stimulus. Focus on mobility, stretching, and light active recovery.`;
+    }
+
+    // Risk assessment
+    if (trainingLoad === 'Overtraining') {
+      riskLevel = 'High Risk';
+      riskExplanation = 'High training volume increases injury risk. Prioritize recovery and reduce intensity.';
+    } else if (isBadWeather) {
+      riskLevel = 'Moderate Risk';
+      riskExplanation = `Weather conditions (${isRainy ? 'rain' : 'strong winds'}) increase injury risk. Adjust training to indoor activities.`;
+    } else if (daysUntilComp < 7 && trainingLoad === 'Heavy') {
+      riskLevel = 'High Risk';
+      riskExplanation = 'Heavy training close to competition may impair performance. Reduce intensity immediately.';
+    } else if (readiness < 50) {
+      riskLevel = 'Moderate Risk';
+      riskExplanation = 'Low readiness score indicates potential overtraining or inadequate recovery. Monitor fatigue levels closely.';
+    } else if (performancePrediction.trend === 'declining') {
+      riskLevel = 'Moderate Risk';
+      riskExplanation = 'Declining performance trend may indicate overtraining or technical issues. Review training load and form.';
+    } else {
+      riskLevel = 'Low Risk';
+      riskExplanation = 'Training load and recovery are well-balanced. Continue with current approach while monitoring for changes.';
+    }
+
+    // Generate daily goals based on training focus and other factors
+    if (trainingFocus === 'Technical Throws') {
+      dailyGoals.push('Complete 40-50 throws with focus on form');
+      dailyGoals.push('Record distance for every throw');
+      dailyGoals.push('Video record 5 throws for technique review');
+      dailyGoals.push('Focus on release point consistency');
+    } else if (trainingFocus === 'Strength Session') {
+      dailyGoals.push('Complete 3 sets of plyometric exercises');
+      dailyGoals.push('Focus on explosive power movements');
+      dailyGoals.push('Core stability workout (15 minutes)');
+      dailyGoals.push('Upper body resistance training');
+    } else if (trainingFocus === 'Recovery & Mobility') {
+      dailyGoals.push('Stretch for 20 minutes focusing on shoulders and hips');
+      dailyGoals.push('Foam roll major muscle groups (15 minutes)');
+      dailyGoals.push('Light mobility exercises');
+      dailyGoals.push('Hydrate with at least 3L of water');
+    } else if (trainingFocus === 'Competition Simulation') {
+      dailyGoals.push('Simulate competition warm-up routine');
+      dailyGoals.push('Practice 6 competition-style throws');
+      dailyGoals.push('Visualize successful throws');
+      dailyGoals.push('Review competition strategy');
+    }
+
+    // Add universal goals based on other factors
+    if (trainingLoad === 'Heavy' || trainingLoad === 'Overtraining') {
+      dailyGoals.push('Sleep 8+ hours for recovery');
+    }
+    if (readiness < 70) {
+      dailyGoals.push('Monitor fatigue levels throughout the day');
+    }
+    if (daysUntilComp < 14) {
+      dailyGoals.push('Visualize competition success (10 minutes)');
+    }
+
+    // Ensure we have 3-5 goals
+    const finalGoals = dailyGoals.slice(0, 5);
+
+    return {
+      trainingFocus,
+      coachAdvice,
+      riskLevel,
+      riskExplanation,
+      dailyGoals: finalGoals,
+    };
+  })();
 
   // Generate Weekly Training Plan
   const generateWeeklyPlan = (): WorkoutDay[] => {
@@ -844,6 +1187,216 @@ if (weather && weather.wind.speed * 3.6 > 25) {
               ) : (
                 <p className="text-zinc-500">No data</p>
               )}
+            </div>
+          </div>
+
+          {/* Competition Countdown Card */}
+          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-orange-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Competition Countdown</h3>
+            </div>
+            {nearestCompetition ? (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-2xl font-bold text-white mb-1">{nearestCompetition.competition_name}</p>
+                  <div className="flex items-center gap-2 text-zinc-400">
+                    <Calendar className="w-4 h-4" />
+                    <span>{nearestCompetition.venue}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-center">
+                    <p className="text-4xl font-bold text-orange-400">{daysUntilCompetition}</p>
+                    <p className="text-sm text-zinc-400">Days Remaining</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-zinc-400">No upcoming competitions. Create one to receive personalized preparation advice.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Practice Consistency Card */}
+          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-blue-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Practice Consistency</h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Sessions Last 7 Days */}
+              <div className="text-center">
+                <p className="text-3xl font-bold text-white mb-1">{practiceConsistency.practicesLast7Days}</p>
+                <p className="text-sm text-zinc-400">Sessions (7 days)</p>
+              </div>
+              {/* Sessions Last 30 Days */}
+              <div className="text-center">
+                <p className="text-3xl font-bold text-white mb-1">{practiceConsistency.practicesLast30Days}</p>
+                <p className="text-sm text-zinc-400">Sessions (30 days)</p>
+              </div>
+              {/* Average Per Week */}
+              <div className="text-center">
+                <p className="text-3xl font-bold text-white mb-1">{practiceConsistency.averageSessionsPerWeek}</p>
+                <p className="text-sm text-zinc-400">Avg/Week</p>
+              </div>
+              {/* Consistency Rating */}
+              <div className="text-center">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full border ${getConsistencyRatingColor(practiceConsistency.consistencyRating)}`}>
+                  <CheckCircle className="w-4 h-4" />
+                  {practiceConsistency.consistencyRating}
+                </span>
+              </div>
+            </div>
+            {/* Training Load Indicator */}
+            <div className="mt-6 pt-6 border-t border-slate-800">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Flame className="w-5 h-5 text-orange-400" />
+                  <span className="text-sm font-medium text-zinc-300">Training Load</span>
+                </div>
+                <span className="text-sm font-semibold text-white">{practiceConsistency.trainingLoad}</span>
+              </div>
+              <div className="w-full bg-slate-800 rounded-full h-2">
+                <div
+                  className={`h-2 rounded-full transition-all duration-300 ${getTrainingLoadColor(practiceConsistency.trainingLoad)}`}
+                  style={{
+                    width: practiceConsistency.trainingLoad === 'Light' ? '25%' :
+                           practiceConsistency.trainingLoad === 'Moderate' ? '50%' :
+                           practiceConsistency.trainingLoad === 'Heavy' ? '75%' : '100%'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* AI Performance Prediction Card */}
+          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-purple-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">AI Performance Prediction</h3>
+            </div>
+            {performancePrediction.hasEnoughData ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Prediction Metrics */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl">
+                    <div>
+                      <p className="text-sm text-zinc-400 mb-1">Predicted Throw</p>
+                      <p className="text-3xl font-bold text-white">{performancePrediction.predictedThrow}m</p>
+                    </div>
+                    <Target className="w-10 h-10 text-purple-400" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-800/50 rounded-xl">
+                      <p className="text-sm text-zinc-400 mb-1">Confidence</p>
+                      <p className="text-2xl font-bold text-green-400">{performancePrediction.confidence}%</p>
+                    </div>
+                    <div className="p-4 bg-slate-800/50 rounded-xl">
+                      <p className="text-sm text-zinc-400 mb-1">Trend</p>
+                      <div className="flex items-center gap-2">
+                        {performancePrediction.trend === 'improving' && <ArrowUp className="w-5 h-5 text-green-400" />}
+                        {performancePrediction.trend === 'declining' && <ArrowDown className="w-5 h-5 text-red-400" />}
+                        {performancePrediction.trend === 'stable' && <Minus className="w-5 h-5 text-yellow-400" />}
+                        <p className="text-xl font-bold text-white capitalize">{performancePrediction.trend}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-slate-800/50 rounded-xl">
+                    <p className="text-sm text-zinc-400 mb-1">Expected Performance Level</p>
+                    <p className="text-xl font-bold text-purple-400">{performancePrediction.performanceLevel}</p>
+                  </div>
+                </div>
+                {/* AI Explanation */}
+                <div className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-xl">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Brain className="w-5 h-5 text-purple-400" />
+                    <p className="text-sm font-medium text-white">AI Analysis</p>
+                  </div>
+                  <p className="text-zinc-300 leading-relaxed">{performancePrediction.explanation}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Sparkles className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+                <p className="text-zinc-400">{performancePrediction.explanation}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Personalized AI Coach Card */}
+          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-xl flex items-center justify-center">
+                <Brain className="w-6 h-6 text-purple-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Personalized AI Coach</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Column */}
+              <div className="space-y-6">
+                {/* Today's Training Focus */}
+                <div className="p-4 bg-slate-800/50 rounded-xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getTrainingFocusColor(personalizedCoach.trainingFocus)}`}>
+                      {getTrainingFocusIcon(personalizedCoach.trainingFocus)}
+                    </div>
+                    <div>
+                      <p className="text-sm text-zinc-400">Today's Training Focus</p>
+                      <p className="text-lg font-semibold text-white">{personalizedCoach.trainingFocus}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Coach's Advice */}
+                <div className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-xl">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Lightbulb className="w-5 h-5 text-yellow-400" />
+                    <p className="text-sm font-medium text-white">Coach's Advice</p>
+                  </div>
+                  <p className="text-zinc-300 leading-relaxed">{personalizedCoach.coachAdvice}</p>
+                </div>
+
+                {/* Risk Assessment */}
+                <div className="p-4 bg-slate-800/50 rounded-xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-zinc-400" />
+                      <p className="text-sm font-medium text-white">Risk Assessment</p>
+                    </div>
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border ${getRiskLevelColor(personalizedCoach.riskLevel)}`}>
+                      {personalizedCoach.riskLevel}
+                    </span>
+                  </div>
+                  <p className="text-sm text-zinc-400">{personalizedCoach.riskExplanation}</p>
+                </div>
+              </div>
+
+              {/* Right Column - Daily Goals */}
+              <div className="p-4 bg-slate-800/50 rounded-xl">
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle2 className="w-5 h-5 text-green-400" />
+                  <p className="text-sm font-medium text-white">Daily Goals</p>
+                </div>
+                <ul className="space-y-3">
+                  {personalizedCoach.dailyGoals.map((goal: string, index: number) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <CheckCircle2 className="w-3 h-3 text-green-400" />
+                      </div>
+                      <span className="text-zinc-300">{goal}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
 
