@@ -6,6 +6,7 @@ import TopNavbar from '@/components/dashboard/TopNavbar';
 import Link from 'next/link';
 import { Plus, History, Target, TrendingUp, Calendar } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { motion } from 'framer-motion';
 
 interface PracticeStats {
   totalSessions: number;
@@ -54,6 +55,33 @@ export default function PracticePage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex min-h-screen bg-slate-950">
+        <Sidebar />
+        <main className="flex-1 lg:ml-64 transition-all duration-300">
+          <TopNavbar />
+          <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
+            <div className="space-y-6">
+              <div className="h-10 w-48 bg-slate-800 rounded-lg animate-pulse" />
+              <div className="h-6 w-64 bg-slate-800 rounded-lg animate-pulse" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[1, 2].map((i) => (
+                  <div key={i} className="bg-slate-800/50 rounded-2xl p-6 animate-pulse" />
+                ))}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-slate-800/50 rounded-2xl p-6 animate-pulse" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-slate-950">
       <Sidebar />
@@ -61,13 +89,23 @@ export default function PracticePage() {
         <TopNavbar />
         <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
           {/* Header */}
-          <div className="mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
             <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Practice Logger</h1>
             <p className="text-slate-400">Track your training sessions and monitor your progress</p>
-          </div>
+          </motion.div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8"
+          >
             <Link
               href="/practice/new"
               className="group relative bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm rounded-2xl border border-purple-500/30 p-6 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-1"
@@ -97,10 +135,15 @@ export default function PracticePage() {
                 </div>
               </div>
             </Link>
-          </div>
+          </motion.div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"
+          >
             {/* Total Sessions */}
             <div className="group relative bg-gradient-to-br from-purple-500/10 to-purple-500/5 backdrop-blur-sm rounded-2xl border border-purple-500/20 p-6 hover:border-purple-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-1">
               <div className="flex items-center justify-between mb-4">
@@ -139,7 +182,7 @@ export default function PracticePage() {
               </div>
               <div className="text-slate-400 text-sm">Average Distance</div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </main>
     </div>

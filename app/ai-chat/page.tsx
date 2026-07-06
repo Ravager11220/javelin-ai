@@ -6,6 +6,7 @@ import { User } from '@supabase/supabase-js';
 import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
 import { Send, MessageSquare, Sparkles, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface Message {
   id: string;
@@ -337,7 +338,7 @@ export default function AIChatCoachPage() {
           <div className="flex items-center justify-center h-screen">
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-zinc-400">Loading your AI Coach...</p>
+              <p className="text-slate-400">Loading your AI Coach...</p>
             </div>
           </div>
         </main>
@@ -352,18 +353,28 @@ export default function AIChatCoachPage() {
         <TopNavbar />
         <div className="flex flex-col h-[calc(100vh-80px)] p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
           {/* Header */}
-          <div className="flex items-center gap-3 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-3 mb-6"
+          >
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-xl flex items-center justify-center">
               <MessageSquare className="w-6 h-6 text-purple-400" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">AI Chat Coach</h1>
-              <p className="text-zinc-400 text-sm">Your personal javelin training assistant</p>
+              <p className="text-slate-400 text-sm">Your personal javelin training assistant</p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto space-y-4 mb-6 pr-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="flex-1 overflow-y-auto space-y-4 mb-6 pr-2"
+          >
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -373,7 +384,7 @@ export default function AIChatCoachPage() {
                   className={`max-w-[80%] sm:max-w-[70%] rounded-2xl p-4 ${
                     message.role === 'user'
                       ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
-                      : 'bg-slate-900/50 backdrop-blur-sm border border-slate-800 text-zinc-300'
+                      : 'bg-slate-900/50 backdrop-blur-sm border border-slate-800 text-slate-300'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -384,7 +395,7 @@ export default function AIChatCoachPage() {
                     )}
                     <div className="flex-1">
                       <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
-                      <div className={`flex items-center gap-2 mt-2 text-xs ${message.role === 'user' ? 'text-white/70' : 'text-zinc-500'}`}>
+                      <div className={`flex items-center gap-2 mt-2 text-xs ${message.role === 'user' ? 'text-white/70' : 'text-slate-500'}`}>
                         <Clock className="w-3 h-3" />
                         {formatTime(message.timestamp)}
                       </div>
@@ -405,7 +416,7 @@ export default function AIChatCoachPage() {
               </div>
             )}
             <div ref={messagesEndRef} />
-          </div>
+          </motion.div>
 
           {/* Suggested Prompts */}
           <div className="mb-4">
@@ -414,7 +425,7 @@ export default function AIChatCoachPage() {
                 <button
                   key={index}
                   onClick={() => handleSuggestedPrompt(prompt)}
-                  className="px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 rounded-full text-sm text-zinc-300 hover:text-white transition-all duration-300"
+                  className="px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 rounded-full text-sm text-slate-300 hover:text-white transition-all duration-300"
                 >
                   {prompt}
                 </button>
@@ -431,7 +442,7 @@ export default function AIChatCoachPage() {
                 onKeyPress={handleKeyPress}
                 placeholder="Ask your AI Coach anything..."
                 rows={1}
-                className="flex-1 bg-transparent text-white placeholder-zinc-500 resize-none focus:outline-none min-h-[44px] max-h-32"
+                className="flex-1 bg-transparent text-white placeholder-slate-500 resize-none focus:outline-none min-h-[44px] max-h-32"
                 style={{ fieldSizing: 'content' }}
               />
               <button

@@ -1095,7 +1095,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
             className="mb-8"
           >
             <h1 className="text-3xl font-bold text-white mb-2">AI Coach</h1>
-            <p className="text-zinc-400">Personalized training recommendations powered by your athlete data.</p>
+            <p className="text-slate-400">Personalized training recommendations powered by your athlete data.</p>
           </motion.div>
 
           {/* Dashboard Summary */}
@@ -1136,7 +1136,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
                       <p className="text-3xl font-bold text-white">{readinessScore}</p>
-                      <p className="text-xs text-zinc-400">Score</p>
+                      <p className="text-xs text-slate-400">Score</p>
                     </div>
                   </div>
                 </div>
@@ -1147,23 +1147,23 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                     <Brain className="w-6 h-6 text-purple-400" />
                     <h3 className="text-xl font-semibold text-white">AI Readiness Score</h3>
                   </div>
-                  <p className="text-zinc-400 mb-4">{readinessExplanation}</p>
+                  <p className="text-slate-400 mb-4">{readinessExplanation}</p>
                   <div className="flex flex-wrap gap-4 text-sm">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-purple-500" />
-                      <span className="text-zinc-400">Practice (40%)</span>
+                      <span className="text-slate-400">Practice (40%)</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-blue-500" />
-                      <span className="text-zinc-400">Competition (30%)</span>
+                      <span className="text-slate-400">Competition (30%)</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-green-500" />
-                      <span className="text-zinc-400">Progress (20%)</span>
+                      <span className="text-slate-400">Progress (20%)</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-orange-500" />
-                      <span className="text-zinc-400">Recovery (10%)</span>
+                      <span className="text-slate-400">Recovery (10%)</span>
                     </div>
                   </div>
                 </div>
@@ -1175,12 +1175,12 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
                   <Award className="w-6 h-6 text-purple-400" />
                 </div>
-                <h3 className="text-sm font-medium text-zinc-400">Personal Best</h3>
+                <h3 className="text-sm font-medium text-slate-400">Personal Best</h3>
               </div>
               {profile?.personal_best ? (
                 <p className="text-3xl font-bold text-white">{profile.personal_best}m</p>
               ) : (
-                <p className="text-zinc-500">Not set</p>
+                <p className="text-slate-500">Not set</p>
               )}
             </motion.div>
 
@@ -1190,7 +1190,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
                   <Activity className="w-6 h-6 text-blue-400" />
                 </div>
-                <h3 className="text-sm font-medium text-zinc-400">Total Sessions</h3>
+                <h3 className="text-sm font-medium text-slate-400">Total Sessions</h3>
               </div>
               <p className="text-3xl font-bold text-white">{practices.length}</p>
             </motion.div>
@@ -1201,7 +1201,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
                   <Trophy className="w-6 h-6 text-orange-400" />
                 </div>
-                <h3 className="text-sm font-medium text-zinc-400">Upcoming</h3>
+                <h3 className="text-sm font-medium text-slate-400">Upcoming</h3>
               </div>
               <p className="text-3xl font-bold text-white">{upcomingCompetitions.length}</p>
             </motion.div>
@@ -1212,12 +1212,12 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-green-400" />
                 </div>
-                <h3 className="text-sm font-medium text-zinc-400">Average Throw</h3>
+                <h3 className="text-sm font-medium text-slate-400">Average Throw</h3>
               </div>
               {averageThrow !== null ? (
                 <p className="text-3xl font-bold text-white">{averageThrow}m</p>
               ) : (
-                <p className="text-zinc-500">No data</p>
+                <p className="text-slate-500">No data</p>
               )}
             </motion.div>
           </motion.div>
@@ -1239,7 +1239,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex-1">
                   <p className="text-2xl font-bold text-white mb-1">{nearestCompetition.competition_name}</p>
-                  <div className="flex items-center gap-2 text-zinc-400">
+                  <div className="flex items-center gap-2 text-slate-400">
                     <Calendar className="w-4 h-4" />
                     <span>{nearestCompetition.venue}</span>
                   </div>
@@ -1247,13 +1247,13 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <div className="flex items-center gap-4">
                   <div className="text-center">
                     <p className="text-4xl font-bold text-orange-400">{daysUntilCompetition}</p>
-                    <p className="text-sm text-zinc-400">Days Remaining</p>
+                    <p className="text-sm text-slate-400">Days Remaining</p>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="text-center py-4">
-                <p className="text-zinc-400">No upcoming competitions. Create one to receive personalized preparation advice.</p>
+                <p className="text-slate-400">No upcoming competitions. Create one to receive personalized preparation advice.</p>
               </div>
             )}
           </motion.div>
@@ -1275,17 +1275,17 @@ if (weather && weather.wind.speed * 3.6 > 25) {
               {/* Sessions Last 7 Days */}
               <div className="text-center">
                 <p className="text-3xl font-bold text-white mb-1">{practiceConsistency.practicesLast7Days}</p>
-                <p className="text-sm text-zinc-400">Sessions (7 days)</p>
+                <p className="text-sm text-slate-400">Sessions (7 days)</p>
               </div>
               {/* Sessions Last 30 Days */}
               <div className="text-center">
                 <p className="text-3xl font-bold text-white mb-1">{practiceConsistency.practicesLast30Days}</p>
-                <p className="text-sm text-zinc-400">Sessions (30 days)</p>
+                <p className="text-sm text-slate-400">Sessions (30 days)</p>
               </div>
               {/* Average Per Week */}
               <div className="text-center">
                 <p className="text-3xl font-bold text-white mb-1">{practiceConsistency.averageSessionsPerWeek}</p>
-                <p className="text-sm text-zinc-400">Avg/Week</p>
+                <p className="text-sm text-slate-400">Avg/Week</p>
               </div>
               {/* Consistency Rating */}
               <div className="text-center">
@@ -1300,7 +1300,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Flame className="w-5 h-5 text-orange-400" />
-                  <span className="text-sm font-medium text-zinc-300">Training Load</span>
+                  <span className="text-sm font-medium text-slate-300">Training Load</span>
                 </div>
                 <span className="text-sm font-semibold text-white">{practiceConsistency.trainingLoad}</span>
               </div>
@@ -1336,18 +1336,18 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl">
                     <div>
-                      <p className="text-sm text-zinc-400 mb-1">Predicted Throw</p>
+                      <p className="text-sm text-slate-400 mb-1">Predicted Throw</p>
                       <p className="text-3xl font-bold text-white">{performancePrediction.predictedThrow}m</p>
                     </div>
                     <Target className="w-10 h-10 text-purple-400" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-slate-800/50 rounded-xl">
-                      <p className="text-sm text-zinc-400 mb-1">Confidence</p>
+                      <p className="text-sm text-slate-400 mb-1">Confidence</p>
                       <p className="text-2xl font-bold text-green-400">{performancePrediction.confidence}%</p>
                     </div>
                     <div className="p-4 bg-slate-800/50 rounded-xl">
-                      <p className="text-sm text-zinc-400 mb-1">Trend</p>
+                      <p className="text-sm text-slate-400 mb-1">Trend</p>
                       <div className="flex items-center gap-2">
                         {performancePrediction.trend === 'improving' && <ArrowUp className="w-5 h-5 text-green-400" />}
                         {performancePrediction.trend === 'declining' && <ArrowDown className="w-5 h-5 text-red-400" />}
@@ -1357,7 +1357,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                     </div>
                   </div>
                   <div className="p-4 bg-slate-800/50 rounded-xl">
-                    <p className="text-sm text-zinc-400 mb-1">Expected Performance Level</p>
+                    <p className="text-sm text-slate-400 mb-1">Expected Performance Level</p>
                     <p className="text-xl font-bold text-purple-400">{performancePrediction.performanceLevel}</p>
                   </div>
                 </div>
@@ -1367,13 +1367,13 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                     <Brain className="w-5 h-5 text-purple-400" />
                     <p className="text-sm font-medium text-white">AI Analysis</p>
                   </div>
-                  <p className="text-zinc-300 leading-relaxed">{performancePrediction.explanation}</p>
+                  <p className="text-slate-300 leading-relaxed">{performancePrediction.explanation}</p>
                 </div>
               </div>
             ) : (
               <div className="text-center py-8">
-                <Sparkles className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-                <p className="text-zinc-400">{performancePrediction.explanation}</p>
+                <Sparkles className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                <p className="text-slate-400">{performancePrediction.explanation}</p>
               </div>
             )}
           </motion.div>
@@ -1402,7 +1402,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                       {getTrainingFocusIcon(personalizedCoach.trainingFocus)}
                     </div>
                     <div>
-                      <p className="text-sm text-zinc-400">Today's Training Focus</p>
+                      <p className="text-sm text-slate-400">Today's Training Focus</p>
                       <p className="text-lg font-semibold text-white">{personalizedCoach.trainingFocus}</p>
                     </div>
                   </div>
@@ -1414,21 +1414,21 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                     <Lightbulb className="w-5 h-5 text-yellow-400" />
                     <p className="text-sm font-medium text-white">Coach's Advice</p>
                   </div>
-                  <p className="text-zinc-300 leading-relaxed">{personalizedCoach.coachAdvice}</p>
+                  <p className="text-slate-300 leading-relaxed">{personalizedCoach.coachAdvice}</p>
                 </div>
 
                 {/* Risk Assessment */}
                 <div className="p-4 bg-slate-800/50 rounded-xl">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-zinc-400" />
+                      <Shield className="w-5 h-5 text-slate-400" />
                       <p className="text-sm font-medium text-white">Risk Assessment</p>
                     </div>
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border ${getRiskLevelColor(personalizedCoach.riskLevel)}`}>
                       {personalizedCoach.riskLevel}
                     </span>
                   </div>
-                  <p className="text-sm text-zinc-400">{personalizedCoach.riskExplanation}</p>
+                  <p className="text-sm text-slate-400">{personalizedCoach.riskExplanation}</p>
                 </div>
               </div>
 
@@ -1444,7 +1444,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                       <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <CheckCircle2 className="w-3 h-3 text-green-400" />
                       </div>
-                      <span className="text-zinc-300">{goal}</span>
+                      <span className="text-slate-300">{goal}</span>
                     </li>
                   ))}
                 </ul>
@@ -1476,7 +1476,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 </div>
 
                 {/* Description */}
-                <p className="text-zinc-400 leading-relaxed">{recommendation.description}</p>
+                <p className="text-slate-400 leading-relaxed">{recommendation.description}</p>
               </div>
             ))}
           </div>
@@ -1523,9 +1523,9 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                     }`}>
                       {workout.icon}
                     </div>
-                    <span className="text-sm font-medium text-zinc-300 capitalize">{workout.type}</span>
+                    <span className="text-sm font-medium text-slate-300 capitalize">{workout.type}</span>
                   </div>
-                  <p className="text-sm text-zinc-400">{workout.description}</p>
+                  <p className="text-sm text-slate-400">{workout.description}</p>
                 </div>
               ))}
             </motion.div>
@@ -1552,7 +1552,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                       <ArrowUp className="w-8 h-8 text-green-400" />
                       <div>
                         <p className="text-2xl font-bold text-green-400">Improving</p>
-                        <p className="text-sm text-zinc-400">Your performance is trending upward</p>
+                        <p className="text-sm text-slate-400">Your performance is trending upward</p>
                       </div>
                     </>
                   )}
@@ -1561,7 +1561,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                       <Minus className="w-8 h-8 text-yellow-400" />
                       <div>
                         <p className="text-2xl font-bold text-yellow-400">Stable</p>
-                        <p className="text-sm text-zinc-400">Consistent performance levels</p>
+                        <p className="text-sm text-slate-400">Consistent performance levels</p>
                       </div>
                     </>
                   )}
@@ -1570,7 +1570,7 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                       <ArrowDown className="w-8 h-8 text-red-400" />
                       <div>
                         <p className="text-2xl font-bold text-red-400">Declining</p>
-                        <p className="text-sm text-zinc-400">Performance needs attention</p>
+                        <p className="text-sm text-slate-400">Performance needs attention</p>
                       </div>
                     </>
                   )}
@@ -1595,14 +1595,14 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 {insights.strengths.length > 0 ? (
                   <ul className="space-y-2">
                     {insights.strengths.map((strength, index) => (
-                      <li key={index} className="flex items-start gap-2 text-zinc-300">
+                      <li key={index} className="flex items-start gap-2 text-slate-300">
                         <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                         <span>{strength}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-zinc-500">Not enough data to analyze strengths</p>
+                  <p className="text-slate-500">Not enough data to analyze strengths</p>
                 )}
               </div>
 
@@ -1615,14 +1615,14 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                 {insights.weaknesses.length > 0 ? (
                   <ul className="space-y-2">
                     {insights.weaknesses.map((weakness, index) => (
-                      <li key={index} className="flex items-start gap-2 text-zinc-300">
+                      <li key={index} className="flex items-start gap-2 text-slate-300">
                         <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                         <span>{weakness}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-zinc-500">No significant weaknesses identified</p>
+                  <p className="text-slate-500">No significant weaknesses identified</p>
                 )}
               </div>
 
@@ -1637,12 +1637,12 @@ if (weather && weather.wind.speed * 3.6 > 25) {
                     {insights.improvements.map((improvement, index) => (
                       <div key={index} className="flex items-start gap-2 p-3 bg-slate-800/50 rounded-lg">
                         <ArrowUp className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                        <span className="text-zinc-300">{improvement}</span>
+                        <span className="text-slate-300">{improvement}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-zinc-500">Continue your current training approach</p>
+                  <p className="text-slate-500">Continue your current training approach</p>
                 )}
               </div>
             </div>

@@ -7,6 +7,7 @@ import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
 import { Target, CheckCircle, Clock, AlertCircle, Plus, Award, TrendingUp, Calendar } from 'lucide-react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 interface Goal {
   id: string;
@@ -123,10 +124,15 @@ export default function GoalsPage() {
         <TopNavbar />
         <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8"
+          >
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Goals</h1>
-              <p className="text-zinc-400">Track your training goals and progress</p>
+              <p className="text-slate-400">Track your training goals and progress</p>
             </div>
             <Link
               href="/goals/new"
@@ -135,17 +141,22 @@ export default function GoalsPage() {
               <Plus className="w-5 h-5" />
               Create Goal
             </Link>
-          </div>
+          </motion.div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
             {/* Total Goals */}
             <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
                   <Target className="w-6 h-6 text-purple-400" />
                 </div>
-                <h3 className="text-sm font-medium text-zinc-400">Total Goals</h3>
+                <h3 className="text-sm font-medium text-slate-400">Total Goals</h3>
               </div>
               <p className="text-3xl font-bold text-white">{totalGoals}</p>
             </div>
@@ -156,7 +167,7 @@ export default function GoalsPage() {
                 <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
                   <CheckCircle className="w-6 h-6 text-green-400" />
                 </div>
-                <h3 className="text-sm font-medium text-zinc-400">Completed</h3>
+                <h3 className="text-sm font-medium text-slate-400">Completed</h3>
               </div>
               <p className="text-3xl font-bold text-white">{completedGoals}</p>
             </div>
@@ -167,7 +178,7 @@ export default function GoalsPage() {
                 <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
                   <Clock className="w-6 h-6 text-blue-400" />
                 </div>
-                <h3 className="text-sm font-medium text-zinc-400">Active</h3>
+                <h3 className="text-sm font-medium text-slate-400">Active</h3>
               </div>
               <p className="text-3xl font-bold text-white">{activeGoals}</p>
             </div>
@@ -178,20 +189,25 @@ export default function GoalsPage() {
                 <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-orange-400" />
                 </div>
-                <h3 className="text-sm font-medium text-zinc-400">Completion Rate</h3>
+                <h3 className="text-sm font-medium text-slate-400">Completion Rate</h3>
               </div>
               <p className="text-3xl font-bold text-white">{completionRate}%</p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Goals Grid */}
           {goals.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
             <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-12 text-center">
               <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Target className="w-10 h-10 text-zinc-500" />
+                <Target className="w-10 h-10 text-slate-500" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">No Goals Yet</h3>
-              <p className="text-zinc-400 mb-6">Create your first goal to start tracking your progress</p>
+              <p className="text-slate-400 mb-6">Create your first goal to start tracking your progress</p>
               <Link
                 href="/goals/new"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-all duration-300"
@@ -200,7 +216,13 @@ export default function GoalsPage() {
                 Create Goal
               </Link>
             </div>
+            </motion.div>
           ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {goals.map((goal) => {
                 const progress = goal.target_distance > 0 
@@ -228,7 +250,7 @@ export default function GoalsPage() {
                     <div className="flex items-center gap-2 mb-4">
                       <Award className="w-5 h-5 text-purple-400" />
                       <div>
-                        <p className="text-sm text-zinc-400">Target</p>
+                        <p className="text-sm text-slate-400">Target</p>
                         <p className="text-lg font-semibold text-white">{goal.target_distance}m</p>
                       </div>
                     </div>
@@ -236,7 +258,7 @@ export default function GoalsPage() {
                     {/* Progress */}
                     <div className="mb-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm text-zinc-400">Progress</span>
+                        <span className="text-sm text-slate-400">Progress</span>
                         <span className="text-sm font-medium text-white">{goal.current_distance}m / {goal.target_distance}m</span>
                       </div>
                       <div className="w-full bg-slate-800 rounded-full h-2">
@@ -245,13 +267,13 @@ export default function GoalsPage() {
                           style={{ width: `${Math.min(progress, 100)}%` }}
                         />
                       </div>
-                      <p className="text-right text-sm text-zinc-400 mt-1">{progress}%</p>
+                      <p className="text-right text-sm text-slate-400 mt-1">{progress}%</p>
                     </div>
 
                     {/* Deadline */}
                     <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4 text-zinc-400" />
-                      <span className="text-zinc-400">
+                      <Calendar className="w-4 h-4 text-slate-400" />
+                      <span className="text-slate-400">
                         {daysUntil > 0 ? `${daysUntil} days remaining` : daysUntil === 0 ? 'Due today' : 'Overdue'}
                       </span>
                     </div>
@@ -259,6 +281,7 @@ export default function GoalsPage() {
                 );
               })}
             </div>
+            </motion.div>
           )}
         </div>
       </main>

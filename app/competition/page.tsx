@@ -13,6 +13,9 @@ import {
 } from 'lucide-react';
 
 import { supabase } from '@/lib/supabase';
+import Sidebar from '@/components/dashboard/Sidebar';
+import TopNavbar from '@/components/dashboard/TopNavbar';
+import { motion } from 'framer-motion';
 
 interface Competition {
   id: string;
@@ -82,35 +85,64 @@ export default function CompetitionPage() {
         return 'bg-red-500/20 text-red-400';
 
       default:
-        return 'bg-zinc-500/20 text-zinc-400';
+        return 'bg-slate-500/20 text-slate-400';
     }
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-zinc-400">
-        Loading competitions...
+      <div className="flex min-h-screen bg-slate-950">
+        <Sidebar />
+        <main className="flex-1 lg:ml-64 transition-all duration-300">
+          <TopNavbar />
+          <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
+            <div className="space-y-6">
+              <div className="h-10 w-48 bg-slate-800 rounded-lg animate-pulse" />
+              <div className="h-6 w-96 bg-slate-800 rounded-lg animate-pulse" />
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 animate-pulse">
+                    <div className="h-6 w-3/4 bg-slate-800 rounded-lg mb-4" />
+                    <div className="space-y-2">
+                      <div className="h-4 w-1/2 bg-slate-800 rounded" />
+                      <div className="h-4 w-1/3 bg-slate-800 rounded" />
+                      <div className="h-4 w-2/3 bg-slate-800 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-zinc-400">
-        Please log in.
+      <div className="flex min-h-screen bg-slate-950">
+        <Sidebar />
+        <main className="flex-1 lg:ml-64 transition-all duration-300">
+          <TopNavbar />
+          <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24 flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-slate-400">Please log in to view competitions.</p>
+              <Link href="/login" className="mt-4 inline-block text-purple-400 hover:text-purple-300">
+                Go to login
+              </Link>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
-if (!user) {
+
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center text-zinc-400">
-      Please log in.
-    </div>
-  );
-}
-  return (
-    <div className="min-h-screen bg-slate-950 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="flex min-h-screen bg-slate-950">
+      <Sidebar />
+      <main className="flex-1 lg:ml-64 transition-all duration-300">
+        <TopNavbar />
+        <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -119,14 +151,14 @@ if (!user) {
               Competition Planner
             </h1>
 
-            <p className="text-zinc-400 mt-2">
+            <p className="text-slate-400 mt-2">
               Plan and manage your competitions.
             </p>
           </div>
 
           <Link
             href="/competition/new"
-            className="flex items-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 transition px-5 py-3 text-white font-semibold"
+            className="mt-4 sm:mt-0 inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
           >
             <Plus className="w-5 h-5" />
             Add Competition
@@ -135,38 +167,48 @@ if (!user) {
 
         {competitions.length === 0 ? (
 
-          <div className="rounded-3xl border border-slate-800 bg-slate-900 p-16 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-12 text-center"
+          >
 
-            <Trophy className="mx-auto w-16 h-16 text-zinc-500 mb-6" />
+            <Trophy className="mx-auto w-16 h-16 text-slate-500 mb-6" />
 
             <h2 className="text-3xl font-bold text-white mb-3">
               No competitions yet
             </h2>
 
-            <p className="text-zinc-400 mb-8">
+            <p className="text-slate-400 mb-8">
               Create your first competition and start planning your season.
             </p>
 
             <Link
               href="/competition/new"
-              className="inline-flex items-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 transition px-6 py-3 text-white font-semibold"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
             >
               <Plus className="w-5 h-5" />
               Add Competition
             </Link>
 
-          </div>
+          </motion.div>
 
         ) : (
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+          >
 
             {competitions.map((competition) => (
 
               <Link
                 key={competition.id}
                 href={`/competition/${competition.id}`}
-                className="rounded-2xl border border-slate-800 bg-slate-900 p-6 hover:border-purple-500 transition block cursor-pointer"
+                className="group relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-1 block cursor-pointer"
               >
 
                 <div className="flex justify-between items-start mb-5">
@@ -185,7 +227,7 @@ if (!user) {
 
                 </div>
 
-                <div className="space-y-3 text-zinc-400">
+                <div className="space-y-3 text-slate-400">
 
                   <div className="flex items-center gap-3">
                     <MapPin className="w-4 h-4" />
@@ -215,11 +257,12 @@ if (!user) {
 
             ))}
 
-          </div>
+          </motion.div>
 
         )}
 
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

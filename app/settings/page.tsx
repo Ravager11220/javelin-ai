@@ -14,6 +14,9 @@ import {
   Moon,
   Sun
 } from 'lucide-react';
+import Sidebar from '@/components/dashboard/Sidebar';
+import TopNavbar from '@/components/dashboard/TopNavbar';
+import { motion } from 'framer-motion';
 
 interface Settings {
   appearance: 'dark' | 'light';
@@ -101,22 +104,46 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-zinc-400">Loading settings...</div>
+      <div className="flex min-h-screen bg-slate-950">
+        <Sidebar />
+        <main className="flex-1 lg:ml-64 transition-all duration-300">
+          <TopNavbar />
+          <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
+            <div className="space-y-6">
+              <div className="h-10 w-48 bg-slate-800 rounded-lg animate-pulse" />
+              <div className="h-6 w-64 bg-slate-800 rounded-lg animate-pulse" />
+              <div className="space-y-6">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 animate-pulse" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-zinc-400">Please log in to view settings.</div>
+      <div className="flex min-h-screen bg-slate-950">
+        <Sidebar />
+        <main className="flex-1 lg:ml-64 transition-all duration-300">
+          <TopNavbar />
+          <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24 flex items-center justify-center">
+            <p className="text-slate-400">Please log in to view settings.</p>
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
+    <div className="flex min-h-screen bg-slate-950">
+      <Sidebar />
+      <main className="flex-1 lg:ml-64 transition-all duration-300">
+        <TopNavbar />
+        <div className="p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
       {/* Toast Notification */}
       {toast && (
         <div className={`fixed top-4 right-4 px-6 py-3 rounded-xl shadow-lg z-50 ${
@@ -128,10 +155,15 @@ export default function SettingsPage() {
 
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
           <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Settings</h1>
-          <p className="text-zinc-400">Manage your application preferences</p>
-        </div>
+          <p className="text-slate-400">Manage your application preferences</p>
+        </motion.div>
 
         {/* Settings Sections */}
         <div className="space-y-6">
@@ -147,10 +179,10 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
                 <div className="flex items-center gap-3">
-                  <Moon className="w-5 h-5 text-zinc-400" />
+                  <Moon className="w-5 h-5 text-slate-400" />
                   <div>
                     <p className="text-white font-medium">Dark Mode</p>
-                    <p className="text-sm text-zinc-400">Use dark theme</p>
+                    <p className="text-sm text-slate-400">Use dark theme</p>
                   </div>
                 </div>
                 <button
@@ -169,10 +201,10 @@ export default function SettingsPage() {
 
               <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
                 <div className="flex items-center gap-3">
-                  <Sun className="w-5 h-5 text-zinc-400" />
+                  <Sun className="w-5 h-5 text-slate-400" />
                   <div>
                     <p className="text-white font-medium">Light Mode</p>
-                    <p className="text-sm text-zinc-400">Use light theme</p>
+                    <p className="text-sm text-slate-400">Use light theme</p>
                   </div>
                 </div>
                 <button
@@ -206,7 +238,7 @@ export default function SettingsPage() {
                 className={`p-4 rounded-xl border transition-all duration-300 ${
                   settings.units === 'metric'
                     ? 'bg-gradient-to-br from-purple-500/20 to-blue-500/20 border-purple-500/50 text-white'
-                    : 'bg-slate-800/30 border-slate-700/50 text-zinc-400 hover:border-slate-600'
+                    : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
                 }`}
               >
                 <p className="font-semibold">Metric</p>
@@ -218,7 +250,7 @@ export default function SettingsPage() {
                 className={`p-4 rounded-xl border transition-all duration-300 ${
                   settings.units === 'imperial'
                     ? 'bg-gradient-to-br from-purple-500/20 to-blue-500/20 border-purple-500/50 text-white'
-                    : 'bg-slate-800/30 border-slate-700/50 text-zinc-400 hover:border-slate-600'
+                    : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
                 }`}
               >
                 <p className="font-semibold">Imperial</p>
@@ -241,7 +273,7 @@ export default function SettingsPage() {
               value={settings.defaultLocation}
               onChange={(e) => handleInputChange('defaultLocation', e.target.value)}
               placeholder="Enter your city"
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
             />
           </div>
 
@@ -258,7 +290,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
                 <div>
                   <p className="text-white font-medium">Email Notifications</p>
-                  <p className="text-sm text-zinc-400">Receive email updates</p>
+                  <p className="text-sm text-slate-400">Receive email updates</p>
                 </div>
                 <button
                   onClick={() => handleToggle('emailNotifications')}
@@ -277,7 +309,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
                 <div>
                   <p className="text-white font-medium">Practice Reminders</p>
-                  <p className="text-sm text-zinc-400">Get reminded about practice</p>
+                  <p className="text-sm text-slate-400">Get reminded about practice</p>
                 </div>
                 <button
                   onClick={() => handleToggle('practiceReminders')}
@@ -296,7 +328,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
                 <div>
                   <p className="text-white font-medium">Competition Reminders</p>
-                  <p className="text-sm text-zinc-400">Get reminded about competitions</p>
+                  <p className="text-sm text-slate-400">Get reminded about competitions</p>
                 </div>
                 <button
                   onClick={() => handleToggle('competitionReminders')}
@@ -325,12 +357,12 @@ export default function SettingsPage() {
 
             <div className="space-y-4">
               <div className="p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
-                <p className="text-sm text-zinc-400 mb-1">Email</p>
+                <p className="text-sm text-slate-400 mb-1">Email</p>
                 <p className="text-white font-medium">{user.email}</p>
               </div>
 
               <div className="p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
-                <p className="text-sm text-zinc-400 mb-1">User ID</p>
+                <p className="text-sm text-slate-400 mb-1">User ID</p>
                 <p className="text-white font-medium font-mono text-sm">{shortenUserId(user.id)}</p>
               </div>
             </div>
@@ -349,14 +381,16 @@ export default function SettingsPage() {
             <button
               onClick={handleReset}
               disabled={saving}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-800 text-zinc-300 font-semibold rounded-xl hover:bg-slate-700 hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-800 text-slate-300 font-semibold rounded-xl hover:bg-slate-700 hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <RotateCcw className="w-5 h-5" />
               Reset Settings
             </button>
           </div>
         </div>
-      </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
