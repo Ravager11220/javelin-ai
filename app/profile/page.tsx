@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
-import { User as UserIcon, Mail, Calendar, Ruler, Weight, Target, Edit, Plus, TrendingUp, Award, Activity, Flame, Trophy, Clock, Zap, Camera, MapPin, UserCheck, Medal } from 'lucide-react';
+import { User as UserLucide, Mail, Calendar, Ruler, Weight, Target, Edit, Plus, TrendingUp, Award, Activity, Flame, Trophy, Clock, Zap, Camera, MapPin, UserCheck, Medal, X, Save, Globe, Map } from 'lucide-react';
 import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
 import { motion } from 'framer-motion';
@@ -23,6 +23,10 @@ interface AthleteProfile {
   primary_event?: string;
   club?: string;
   coach?: string;
+  date_of_birth?: string;
+  gender?: string;
+  country?: string;
+  state?: string;
   created_at: string;
 }
 
@@ -53,6 +57,8 @@ export default function ProfilePage() {
   const [practices, setPractices] = useState<Practice[]>([]);
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
+  const [editedProfile, setEditedProfile] = useState<Partial<AthleteProfile>>({});
 
   useEffect(() => {
     async function fetchUserAndProfile() {
@@ -243,6 +249,71 @@ export default function ProfilePage() {
   const monthlyActivityData = getMonthlyActivityData();
   const personalRecordsTimeline = getPersonalRecordsTimeline();
 
+  const handleEditPersonalInfo = () => {
+    setEditedProfile({
+      full_name: profile?.full_name,
+      date_of_birth: profile?.date_of_birth,
+      gender: profile?.gender,
+      height: profile?.height,
+      weight: profile?.weight,
+      dominant_arm: profile?.dominant_arm,
+      country: profile?.country,
+      state: profile?.state,
+      club: profile?.club,
+      coach: profile?.coach,
+    });
+    setIsEditingPersonalInfo(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingPersonalInfo(false);
+    setEditedProfile({});
+  };
+
+  const handleSavePersonalInfo = async () => {
+    if (!profile || !user) return;
+
+    // Validate required fields
+    if (!editedProfile.full_name || !editedProfile.height || !editedProfile.weight || !editedProfile.dominant_arm) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('athlete_profiles')
+        .update({
+          full_name: editedProfile.full_name,
+          date_of_birth: editedProfile.date_of_birth,
+          gender: editedProfile.gender,
+          height: editedProfile.height,
+          weight: editedProfile.weight,
+          dominant_arm: editedProfile.dominant_arm,
+          country: editedProfile.country,
+          state: editedProfile.state,
+          club: editedProfile.club,
+          coach: editedProfile.coach,
+        })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+
+      // Refetch profile
+      const { data: profileData } = await supabase
+        .from('athlete_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      setProfile(profileData);
+      setIsEditingPersonalInfo(false);
+      setEditedProfile({});
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Failed to update profile');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen bg-slate-950">
@@ -294,7 +365,7 @@ export default function ProfilePage() {
             >
               <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8 sm:p-12 text-center">
                 <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <UserIcon className="w-10 h-10 text-slate-400" />
+                  <UserLucide className="w-10 h-10 text-slate-400" />
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">No profile created yet.</h2>
                 <p className="text-slate-400 mb-8 max-w-md mx-auto">
@@ -460,53 +531,220 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-              {/* Age */}
-              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                <div className="flex items-center gap-2 text-slate-400 mb-2">
-                  <Calendar className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-wider">Age</span>
-                </div>
-                <p className="text-xl font-bold text-white">{profile.age}</p>
+            {/* Personal Information Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className="bg-slate-800/30 rounded-2xl p-6 sm:p-8 border border-slate-700/50"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <UserLucide className="w-5 h-5 text-purple-400" />
+                  Personal Information
+                </h3>
+                {!isEditingPersonalInfo && (
+                  <button
+                    onClick={handleEditPersonalInfo}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-700/50 text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-300 text-sm"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </button>
+                )}
               </div>
 
-              {/* Height */}
-              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                <div className="flex items-center gap-2 text-slate-400 mb-2">
-                  <Ruler className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-wider">Height</span>
+              {isEditingPersonalInfo ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Full Name *</label>
+                    <input
+                      type="text"
+                      value={editedProfile.full_name || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, full_name: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Date of Birth</label>
+                    <input
+                      type="date"
+                      value={editedProfile.date_of_birth || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, date_of_birth: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Gender</label>
+                    <select
+                      value={editedProfile.gender || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, gender: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    >
+                      <option value="">Select gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Height (cm) *</label>
+                    <input
+                      type="number"
+                      value={editedProfile.height || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, height: Number(e.target.value) })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Weight (kg) *</label>
+                    <input
+                      type="number"
+                      value={editedProfile.weight || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, weight: Number(e.target.value) })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Dominant Hand *</label>
+                    <select
+                      value={editedProfile.dominant_arm || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, dominant_arm: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    >
+                      <option value="">Select hand</option>
+                      <option value="right">Right</option>
+                      <option value="left">Left</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Country</label>
+                    <input
+                      type="text"
+                      value={editedProfile.country || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, country: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">State</label>
+                    <input
+                      type="text"
+                      value={editedProfile.state || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, state: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Club</label>
+                    <input
+                      type="text"
+                      value={editedProfile.club || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, club: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Coach</label>
+                    <input
+                      type="text"
+                      value={editedProfile.coach || ''}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, coach: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
+                  </div>
+                  <div className="sm:col-span-2 flex items-center gap-3 pt-4">
+                    <button
+                      onClick={handleSavePersonalInfo}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-300"
+                    >
+                      <Save className="w-4 h-4" />
+                      Save Changes
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 hover:text-white transition-all duration-300"
+                    >
+                      <X className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </div>
                 </div>
-                <p className="text-xl font-bold text-white">{profile.height} <span className="text-sm font-normal text-slate-400">cm</span></p>
-              </div>
-
-              {/* Weight */}
-              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                <div className="flex items-center gap-2 text-slate-400 mb-2">
-                  <Weight className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-wider">Weight</span>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <UserLucide className="w-5 h-5 text-purple-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Full Name</p>
+                      <p className="text-white font-medium">{profile.full_name}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Calendar className="w-5 h-5 text-blue-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Date of Birth</p>
+                      <p className="text-white font-medium">{profile.date_of_birth ? new Date(profile.date_of_birth).toLocaleDateString() : 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <UserLucide className="w-5 h-5 text-green-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Gender</p>
+                      <p className="text-white font-medium capitalize">{profile.gender || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Ruler className="w-5 h-5 text-orange-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Height</p>
+                      <p className="text-white font-medium">{profile.height} cm</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Weight className="w-5 h-5 text-pink-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Weight</p>
+                      <p className="text-white font-medium">{profile.weight} kg</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <UserLucide className="w-5 h-5 text-cyan-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Dominant Hand</p>
+                      <p className="text-white font-medium capitalize">{profile.dominant_arm}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Globe className="w-5 h-5 text-yellow-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Country</p>
+                      <p className="text-white font-medium">{profile.country || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Map className="w-5 h-5 text-red-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">State</p>
+                      <p className="text-white font-medium">{profile.state || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <MapPin className="w-5 h-5 text-indigo-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Club</p>
+                      <p className="text-white font-medium">{profile.club || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl sm:col-span-2 lg:col-span-1">
+                    <UserCheck className="w-5 h-5 text-teal-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Coach</p>
+                      <p className="text-white font-medium">{profile.coach || 'Not set'}</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xl font-bold text-white">{profile.weight} <span className="text-sm font-normal text-slate-400">kg</span></p>
-              </div>
-
-              {/* Dominant Arm */}
-              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                <div className="flex items-center gap-2 text-slate-400 mb-2">
-                  <UserIcon className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-wider">Arm</span>
-                </div>
-                <p className="text-xl font-bold text-white capitalize">{profile.dominant_arm}</p>
-              </div>
-
-              {/* Personal Best */}
-              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 col-span-2 sm:col-span-1">
-                <div className="flex items-center gap-2 text-slate-400 mb-2">
-                  <Target className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-wider">Best</span>
-                </div>
-                <p className="text-xl font-bold text-white">{profile.personal_best} <span className="text-sm font-normal text-slate-400">m</span></p>
-              </div>
-            </div>
+              )}
+            </motion.div>
           </div>
         </motion.div>
 
