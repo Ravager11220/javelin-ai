@@ -27,6 +27,10 @@ interface AthleteProfile {
   gender?: string;
   country?: string;
   state?: string;
+  season_best?: number;
+  training_experience?: number;
+  competition_level?: string;
+  dominant_throw_style?: string;
   created_at: string;
 }
 
@@ -59,6 +63,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
   const [editedProfile, setEditedProfile] = useState<Partial<AthleteProfile>>({});
+  const [isEditingPerformanceInfo, setIsEditingPerformanceInfo] = useState(false);
+  const [editedPerformance, setEditedPerformance] = useState<Partial<AthleteProfile>>({});
 
   useEffect(() => {
     async function fetchUserAndProfile() {
@@ -311,6 +317,71 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error updating profile:', error);
       alert('Failed to update profile');
+    }
+  };
+
+  const handleEditPerformanceInfo = () => {
+    setEditedPerformance({
+      primary_event: profile?.primary_event,
+      personal_best: profile?.personal_best,
+      season_best: profile?.season_best,
+      training_experience: profile?.training_experience,
+      competition_level: profile?.competition_level,
+      dominant_throw_style: profile?.dominant_throw_style,
+    });
+    setIsEditingPerformanceInfo(true);
+  };
+
+  const handleCancelPerformanceEdit = () => {
+    setIsEditingPerformanceInfo(false);
+    setEditedPerformance({});
+  };
+
+  const handleSavePerformanceInfo = async () => {
+    if (!profile || !user) return;
+
+    // Validate numeric fields
+    if (editedPerformance.personal_best !== undefined && (editedPerformance.personal_best < 0 || isNaN(editedPerformance.personal_best))) {
+      alert('Personal Best must be a valid positive number');
+      return;
+    }
+    if (editedPerformance.season_best !== undefined && (editedPerformance.season_best < 0 || isNaN(editedPerformance.season_best))) {
+      alert('Season Best must be a valid positive number');
+      return;
+    }
+    if (editedPerformance.training_experience !== undefined && (editedPerformance.training_experience < 0 || isNaN(editedPerformance.training_experience))) {
+      alert('Training Experience must be a valid positive number');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('athlete_profiles')
+        .update({
+          primary_event: editedPerformance.primary_event,
+          personal_best: editedPerformance.personal_best,
+          season_best: editedPerformance.season_best,
+          training_experience: editedPerformance.training_experience,
+          competition_level: editedPerformance.competition_level,
+          dominant_throw_style: editedPerformance.dominant_throw_style,
+        })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+
+      // Refetch profile
+      const { data: profileData } = await supabase
+        .from('athlete_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      setProfile(profileData);
+      setIsEditingPerformanceInfo(false);
+      setEditedPerformance({});
+    } catch (error) {
+      console.error('Error updating performance info:', error);
+      alert('Failed to update performance info');
     }
   };
 
@@ -745,6 +816,160 @@ export default function ProfilePage() {
                 </div>
               )}
             </motion.div>
+
+            {/* Performance Information Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+              className="bg-slate-800/30 rounded-2xl p-6 sm:p-8 border border-slate-700/50 mt-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-orange-400" />
+                  Performance Information
+                </h3>
+                {!isEditingPerformanceInfo && (
+                  <button
+                    onClick={handleEditPerformanceInfo}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-700/50 text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-300 text-sm"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </button>
+                )}
+              </div>
+
+              {isEditingPerformanceInfo ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Primary Event</label>
+                    <input
+                      type="text"
+                      value={editedPerformance.primary_event || ''}
+                      onChange={(e) => setEditedPerformance({ ...editedPerformance, primary_event: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                      placeholder="e.g., Javelin Throw"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Personal Best (m)</label>
+                    <input
+                      type="number"
+                      value={editedPerformance.personal_best || ''}
+                      onChange={(e) => setEditedPerformance({ ...editedPerformance, personal_best: Number(e.target.value) })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                      placeholder="e.g., 65.5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Season Best (m)</label>
+                    <input
+                      type="number"
+                      value={editedPerformance.season_best || ''}
+                      onChange={(e) => setEditedPerformance({ ...editedPerformance, season_best: Number(e.target.value) })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                      placeholder="e.g., 62.3"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Training Experience (years)</label>
+                    <input
+                      type="number"
+                      value={editedPerformance.training_experience || ''}
+                      onChange={(e) => setEditedPerformance({ ...editedPerformance, training_experience: Number(e.target.value) })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                      placeholder="e.g., 5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Competition Level</label>
+                    <select
+                      value={editedPerformance.competition_level || ''}
+                      onChange={(e) => setEditedPerformance({ ...editedPerformance, competition_level: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    >
+                      <option value="">Select level</option>
+                      <option value="district">District</option>
+                      <option value="state">State</option>
+                      <option value="national">National</option>
+                      <option value="international">International</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Dominant Throw Style</label>
+                    <input
+                      type="text"
+                      value={editedPerformance.dominant_throw_style || ''}
+                      onChange={(e) => setEditedPerformance({ ...editedPerformance, dominant_throw_style: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                      placeholder="e.g., Overhead"
+                    />
+                  </div>
+                  <div className="sm:col-span-2 flex items-center gap-3 pt-4">
+                    <button
+                      onClick={handleSavePerformanceInfo}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-300"
+                    >
+                      <Save className="w-4 h-4" />
+                      Save Changes
+                    </button>
+                    <button
+                      onClick={handleCancelPerformanceEdit}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 hover:text-white transition-all duration-300"
+                    >
+                      <X className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Target className="w-5 h-5 text-purple-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Primary Event</p>
+                      <p className="text-white font-medium">{profile.primary_event || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Trophy className="w-5 h-5 text-orange-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Personal Best</p>
+                      <p className="text-white font-medium">{profile.personal_best}m</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Award className="w-5 h-5 text-yellow-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Season Best</p>
+                      <p className="text-white font-medium">{profile.season_best || 'Not set'}m</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Clock className="w-5 h-5 text-green-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Training Experience</p>
+                      <p className="text-white font-medium">{profile.training_experience || 'Not set'} years</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Flame className="w-5 h-5 text-red-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Competition Level</p>
+                      <p className="text-white font-medium capitalize">{profile.competition_level || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Activity className="w-5 h-5 text-cyan-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Dominant Throw Style</p>
+                      <p className="text-white font-medium">{profile.dominant_throw_style || 'Not set'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
           </div>
         </motion.div>
 
@@ -752,7 +977,7 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
           className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
         >
           {/* Performance Score Card */}
@@ -872,7 +1097,7 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
           className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8"
         >
           <div className="flex items-center gap-3 mb-6">
@@ -926,7 +1151,7 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
           className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6"
         >
           <div className="flex items-center gap-3 mb-6">
