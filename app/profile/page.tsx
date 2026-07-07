@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
-import { User as UserIcon, Mail, Calendar, Ruler, Weight, Target, Edit, Plus, TrendingUp, Award, Activity, Flame, Trophy, Clock, Zap } from 'lucide-react';
+import { User as UserIcon, Mail, Calendar, Ruler, Weight, Target, Edit, Plus, TrendingUp, Award, Activity, Flame, Trophy, Clock, Zap, Camera, MapPin, UserCheck, Medal } from 'lucide-react';
 import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
 import { motion } from 'framer-motion';
@@ -20,6 +20,9 @@ interface AthleteProfile {
   personal_best: number;
   bio: string;
   avatar_url: string;
+  primary_event?: string;
+  club?: string;
+  coach?: string;
   created_at: string;
 }
 
@@ -345,32 +348,105 @@ export default function ProfilePage() {
         >
           {/* Profile Header */}
           <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-6 sm:p-8 border-b border-slate-800">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-              {/* Avatar */}
-              <div className="relative">
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
+              {/* Avatar with Upload Button */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="relative group"
+              >
                 {profile.avatar_url ? (
                   <img
                     src={profile.avatar_url}
                     alt={profile.full_name}
-                    className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover border-2 border-slate-700"
+                    className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-slate-700 shadow-xl"
                   />
                 ) : (
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-slate-700">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-4 border-slate-700 shadow-xl">
                     <span className="text-3xl sm:text-4xl font-bold text-white">
                       {profile.full_name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                 )}
-              </div>
+                <button
+                  className="absolute bottom-0 right-0 w-8 h-8 sm:w-10 sm:h-10 bg-purple-500 rounded-full flex items-center justify-center border-2 border-slate-900 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Change photo"
+                >
+                  <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </button>
+              </motion.div>
 
-              {/* Name and Email */}
-              <div className="text-center sm:text-left flex-1">
+              {/* Name and Additional Info */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                className="text-center lg:text-left flex-1"
+              >
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">{profile.full_name}</h2>
-                <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-400">
-                  <Mail className="w-4 h-4" />
-                  <span className="text-sm">{user.email}</span>
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-slate-400 text-sm mb-3">
+                  {profile.primary_event && (
+                    <div className="flex items-center gap-1.5">
+                      <Target className="w-4 h-4 text-blue-400" />
+                      <span>{profile.primary_event}</span>
+                    </div>
+                  )}
+                  {profile.club && (
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4 text-green-400" />
+                      <span>{profile.club}</span>
+                    </div>
+                  )}
+                  {profile.coach && (
+                    <div className="flex items-center gap-1.5">
+                      <UserCheck className="w-4 h-4 text-orange-400" />
+                      <span>{profile.coach}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
+                <div className="flex items-center justify-center lg:justify-start gap-2 text-slate-400 text-sm">
+                  <Mail className="w-4 h-4" />
+                  <span>{user.email}</span>
+                </div>
+              </motion.div>
+
+              {/* Compact Stat Cards */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+                className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto"
+              >
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-slate-700/50 text-center">
+                  <div className="flex items-center justify-center gap-1 text-slate-400 text-xs mb-1">
+                    <Activity className="w-3 h-3" />
+                    <span>Practices</span>
+                  </div>
+                  <p className="text-lg sm:text-xl font-bold text-white">{practices.length}</p>
+                </div>
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-slate-700/50 text-center">
+                  <div className="flex items-center justify-center gap-1 text-slate-400 text-xs mb-1">
+                    <Trophy className="w-3 h-3" />
+                    <span>Competitions</span>
+                  </div>
+                  <p className="text-lg sm:text-xl font-bold text-white">{competitions.length}</p>
+                </div>
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-slate-700/50 text-center">
+                  <div className="flex items-center justify-center gap-1 text-slate-400 text-xs mb-1">
+                    <Target className="w-3 h-3" />
+                    <span>PB</span>
+                  </div>
+                  <p className="text-lg sm:text-xl font-bold text-white">{profile.personal_best}m</p>
+                </div>
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-slate-700/50 text-center">
+                  <div className="flex items-center justify-center gap-1 text-slate-400 text-xs mb-1">
+                    <Medal className="w-3 h-3" />
+                    <span>Goals</span>
+                  </div>
+                  <p className="text-lg sm:text-xl font-bold text-white">0</p>
+                </div>
+              </motion.div>
             </div>
           </div>
 
