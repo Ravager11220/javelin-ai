@@ -15,7 +15,8 @@ import {
   Sun,
   Download,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
+  Keyboard
 } from 'lucide-react';
 import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
@@ -491,6 +492,62 @@ export default function SettingsPage() {
                     Delete
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Keyboard Shortcuts */}
+          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 sm:p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
+                <Keyboard className="w-5 h-5 text-purple-400" />
+              </div>
+              <h2 className="text-lg font-semibold text-white">Keyboard Shortcuts</h2>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
+                <span className="text-slate-300">Open Search</span>
+                <kbd className="flex items-center gap-1 px-3 py-1.5 bg-slate-700 rounded-lg text-sm text-slate-300">
+                  <span>⌘</span>
+                  <span>K</span>
+                </kbd>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
+                <span className="text-slate-300">Go to Dashboard</span>
+                <kbd className="flex items-center gap-1 px-3 py-1.5 bg-slate-700 rounded-lg text-sm text-slate-300">
+                  <span>G</span>
+                  <span>+</span>
+                  <span>D</span>
+                </kbd>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
+                <span className="text-slate-300">Go to Analytics</span>
+                <kbd className="flex items-center gap-1 px-3 py-1.5 bg-slate-700 rounded-lg text-sm text-slate-300">
+                  <span>G</span>
+                  <span>+</span>
+                  <span>A</span>
+                </kbd>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
+                <span className="text-slate-300">Go to Coach</span>
+                <kbd className="flex items-center gap-1 px-3 py-1.5 bg-slate-700 rounded-lg text-sm text-slate-300">
+                  <span>G</span>
+                  <span>+</span>
+                  <span>C</span>
+                </kbd>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
+                <span className="text-slate-300">Go to Practice</span>
+                <kbd className="flex items-center gap-1 px-3 py-1.5 bg-slate-700 rounded-lg text-sm text-slate-300">
+                  <span>G</span>
+                  <span>+</span>
+                  <span>P</span>
+                </kbd>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
+                <span className="text-slate-300">Close Modal</span>
+                <kbd className="px-3 py-1.5 bg-slate-700 rounded-lg text-sm text-slate-300">Esc</kbd>
               </div>
             </div>
           </div>

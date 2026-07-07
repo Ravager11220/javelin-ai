@@ -51,8 +51,14 @@ export default function GlobalSearch() {
       }
     };
 
+    const handleOpenSearch = () => setIsOpen(true);
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('open-search', handleOpenSearch);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('open-search', handleOpenSearch);
+    };
   }, [isOpen]);
 
   // Focus input when modal opens
