@@ -123,6 +123,93 @@ export default function ProfilePage() {
     fetchUserAndProfile();
   }, []);
 
+  // Calculate profile completion percentage
+  const calculateProfileCompletion = () => {
+    if (!profile) return 0;
+
+    const requiredFields = [
+      'full_name',
+      'age',
+      'height',
+      'weight',
+      'dominant_arm',
+      'personal_best',
+    ];
+
+    const optionalFields = [
+      'primary_event',
+      'club',
+      'coach',
+      'date_of_birth',
+      'gender',
+      'country',
+      'state',
+      'season_best',
+      'training_experience',
+      'competition_level',
+      'dominant_throw_style',
+      'blood_group',
+      'injury_history',
+      'allergies',
+      'fitness_status',
+      'emergency_contact_name',
+      'emergency_contact_relationship',
+      'emergency_contact_phone',
+      'emergency_contact_email',
+    ];
+
+    let filledRequired = 0;
+    let filledOptional = 0;
+
+    requiredFields.forEach(field => {
+      if (profile[field as keyof AthleteProfile]) filledRequired++;
+    });
+
+    optionalFields.forEach(field => {
+      if (profile[field as keyof AthleteProfile]) filledOptional++;
+    });
+
+    const requiredScore = (filledRequired / requiredFields.length) * 60;
+    const optionalScore = (filledOptional / optionalFields.length) * 40;
+
+    return Math.round(requiredScore + optionalScore);
+  };
+
+  // Get missing fields for checklist
+  const getMissingFields = () => {
+    if (!profile) return [];
+
+    const allFields = [
+      { key: 'full_name', label: 'Full Name', section: 'personal' },
+      { key: 'age', label: 'Age', section: 'personal' },
+      { key: 'height', label: 'Height', section: 'personal' },
+      { key: 'weight', label: 'Weight', section: 'personal' },
+      { key: 'dominant_arm', label: 'Dominant Arm', section: 'personal' },
+      { key: 'personal_best', label: 'Personal Best', section: 'performance' },
+      { key: 'primary_event', label: 'Primary Event', section: 'performance' },
+      { key: 'season_best', label: 'Season Best', section: 'performance' },
+      { key: 'training_experience', label: 'Training Experience', section: 'performance' },
+      { key: 'competition_level', label: 'Competition Level', section: 'performance' },
+      { key: 'dominant_throw_style', label: 'Dominant Throw Style', section: 'performance' },
+      { key: 'blood_group', label: 'Blood Group', section: 'medical' },
+      { key: 'injury_history', label: 'Injury History', section: 'medical' },
+      { key: 'allergies', label: 'Allergies', section: 'medical' },
+      { key: 'fitness_status', label: 'Fitness Status', section: 'medical' },
+      { key: 'emergency_contact_name', label: 'Emergency Contact Name', section: 'emergency' },
+      { key: 'emergency_contact_relationship', label: 'Emergency Contact Relationship', section: 'emergency' },
+      { key: 'emergency_contact_phone', label: 'Emergency Contact Phone', section: 'emergency' },
+      { key: 'date_of_birth', label: 'Date of Birth', section: 'personal' },
+      { key: 'gender', label: 'Gender', section: 'personal' },
+      { key: 'country', label: 'Country', section: 'personal' },
+      { key: 'state', label: 'State', section: 'personal' },
+      { key: 'club', label: 'Club', section: 'personal' },
+      { key: 'coach', label: 'Coach', section: 'personal' },
+      { key: 'emergency_contact_email', label: 'Emergency Contact Email', section: 'emergency' },
+    ];
+
+    return allFields.filter(field => !profile[field.key as keyof AthleteProfile]);
+  };
+
   // Calculate performance metrics
   const calculatePerformanceScore = () => {
     if (!profile || practices.length === 0) return 0;
@@ -151,24 +238,6 @@ export default function ProfilePage() {
     score += completionRate * 0.2;
     
     return Math.round(score);
-  };
-
-  const calculateProfileCompletion = () => {
-    if (!profile) return 0;
-    
-    const fields = [
-      profile.full_name,
-      profile.age,
-      profile.height,
-      profile.weight,
-      profile.dominant_arm,
-      profile.personal_best,
-      profile.bio,
-      profile.avatar_url,
-    ];
-    
-    const filledFields = fields.filter(field => field !== null && field !== undefined && field !== '').length;
-    return Math.round((filledFields / fields.length) * 100);
   };
 
   const calculateBestMonth = () => {
@@ -738,6 +807,7 @@ export default function ProfilePage() {
 
             {/* Personal Information Card */}
             <motion.div
+              id="personal"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.15 }}
@@ -953,6 +1023,7 @@ export default function ProfilePage() {
 
             {/* Performance Information Card */}
             <motion.div
+              id="performance"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.25 }}
@@ -1107,6 +1178,7 @@ export default function ProfilePage() {
 
             {/* Medical Information Card */}
             <motion.div
+              id="medical"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.35 }}
@@ -1241,6 +1313,7 @@ export default function ProfilePage() {
 
             {/* Emergency Contact Card */}
             <motion.div
+              id="emergency"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.45 }}
@@ -1353,6 +1426,132 @@ export default function ProfilePage() {
                   </div>
                 </div>
               )}
+            </motion.div>
+
+            {/* Profile Completion Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="bg-slate-800/30 rounded-2xl p-6 sm:p-8 border border-slate-700/50 mt-6"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
+                  <Award className="w-5 h-5 text-green-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Profile Completion</h3>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                {/* Circular Progress */}
+                <div className="relative">
+                  <svg className="w-32 h-32 transform -rotate-90">
+                    <circle
+                      cx="64"
+                      cy="64"
+                      r="56"
+                      fill="none"
+                      stroke="#1e293b"
+                      strokeWidth="8"
+                    />
+                    <motion.circle
+                      cx="64"
+                      cy="64"
+                      r="56"
+                      fill="none"
+                      stroke="url(#gradient)"
+                      strokeWidth="8"
+                      strokeLinecap="round"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: calculateProfileCompletion() / 100 }}
+                      transition={{ duration: 1, ease: "easeInOut" }}
+                      style={{
+                        strokeDasharray: "351.86",
+                        strokeDashoffset: "351.86"
+                      }}
+                    />
+                    <defs>
+                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#a855f7" />
+                        <stop offset="100%" stopColor="#3b82f6" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">{calculateProfileCompletion()}%</span>
+                  </div>
+                </div>
+
+                {/* Progress Bar and Checklist */}
+                <div className="flex-1 w-full">
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-slate-400">Completion Progress</span>
+                      <span className="text-white font-medium">{calculateProfileCompletion()}% Complete</span>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${calculateProfileCompletion()}%` }}
+                        transition={{ duration: 1, ease: "easeInOut" }}
+                        className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  {getMissingFields().length > 0 && (
+                    <div>
+                      <p className="text-sm text-slate-400 mb-3">Missing Information ({getMissingFields().length} items)</p>
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                        {getMissingFields().slice(0, 5).map((field, index) => (
+                          <motion.button
+                            key={field.key}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.6 + index * 0.05 }}
+                            onClick={() => {
+                              const sectionMap: { [key: string]: string } = {
+                                'personal': 'personal',
+                                'performance': 'performance',
+                                'medical': 'medical',
+                                'emergency': 'emergency'
+                              };
+                              const section = sectionMap[field.section];
+                              if (section) {
+                                const element = document.getElementById(section);
+                                if (element) {
+                                  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }
+                              }
+                            }}
+                            className="w-full flex items-center gap-2 p-2 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-all text-left"
+                          >
+                            <div className="w-2 h-2 rounded-full bg-slate-500" />
+                            <span className="text-sm text-slate-300">{field.label}</span>
+                          </motion.button>
+                        ))}
+                        {getMissingFields().length > 5 && (
+                          <p className="text-xs text-slate-500 text-center pt-1">
+                            +{getMissingFields().length - 5} more items
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {getMissingFields().length === 0 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                      className="flex items-center gap-2 text-green-400"
+                    >
+                      <Award className="w-5 h-5" />
+                      <span className="text-sm font-medium">Profile is complete!</span>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
             </motion.div>
           </div>
         </motion.div>
