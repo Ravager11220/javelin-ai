@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
-import { User as UserLucide, Mail, Calendar, Ruler, Weight, Target, Edit, Plus, TrendingUp, Award, Activity, Flame, Trophy, Clock, Zap, Camera, MapPin, UserCheck, Medal, X, Save, Globe, Map } from 'lucide-react';
+import { User as UserLucide, Mail, Calendar, Ruler, Weight, Target, Edit, Plus, TrendingUp, Award, Activity, Flame, Trophy, Clock, Zap, Camera, MapPin, UserCheck, Medal, X, Save, Globe, Map, AlertTriangle } from 'lucide-react';
 import Sidebar from '@/components/dashboard/Sidebar';
 import TopNavbar from '@/components/dashboard/TopNavbar';
 import { motion } from 'framer-motion';
@@ -31,6 +31,10 @@ interface AthleteProfile {
   training_experience?: number;
   competition_level?: string;
   dominant_throw_style?: string;
+  blood_group?: string;
+  injury_history?: string;
+  allergies?: string;
+  fitness_status?: 'excellent' | 'good' | 'recovering' | 'injured';
   created_at: string;
 }
 
@@ -65,6 +69,8 @@ export default function ProfilePage() {
   const [editedProfile, setEditedProfile] = useState<Partial<AthleteProfile>>({});
   const [isEditingPerformanceInfo, setIsEditingPerformanceInfo] = useState(false);
   const [editedPerformance, setEditedPerformance] = useState<Partial<AthleteProfile>>({});
+  const [isEditingMedicalInfo, setIsEditingMedicalInfo] = useState(false);
+  const [editedMedical, setEditedMedical] = useState<Partial<AthleteProfile>>({});
 
   useEffect(() => {
     async function fetchUserAndProfile() {
@@ -382,6 +388,68 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error updating performance info:', error);
       alert('Failed to update performance info');
+    }
+  };
+
+  const handleEditMedicalInfo = () => {
+    setEditedMedical({
+      blood_group: profile?.blood_group,
+      injury_history: profile?.injury_history,
+      allergies: profile?.allergies,
+      fitness_status: profile?.fitness_status,
+    });
+    setIsEditingMedicalInfo(true);
+  };
+
+  const handleCancelMedicalEdit = () => {
+    setIsEditingMedicalInfo(false);
+    setEditedMedical({});
+  };
+
+  const handleSaveMedicalInfo = async () => {
+    if (!profile || !user) return;
+
+    try {
+      const { error } = await supabase
+        .from('athlete_profiles')
+        .update({
+          blood_group: editedMedical.blood_group,
+          injury_history: editedMedical.injury_history,
+          allergies: editedMedical.allergies,
+          fitness_status: editedMedical.fitness_status,
+        })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+
+      // Refetch profile
+      const { data: profileData } = await supabase
+        .from('athlete_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      setProfile(profileData);
+      setIsEditingMedicalInfo(false);
+      setEditedMedical({});
+    } catch (error) {
+      console.error('Error updating medical info:', error);
+      alert('Failed to update medical info');
+    }
+  };
+
+  const getFitnessStatusColor = (status?: string) => {
+    switch (status) {
+      case 'excellent':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'good':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'recovering':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'injured':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default:
+        return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
     }
   };
 
@@ -970,6 +1038,140 @@ export default function ProfilePage() {
                 </div>
               )}
             </motion.div>
+
+            {/* Medical Information Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+              className="bg-slate-800/30 rounded-2xl p-6 sm:p-8 border border-slate-700/50 mt-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-red-400" />
+                  Medical Information
+                </h3>
+                {!isEditingMedicalInfo && (
+                  <button
+                    onClick={handleEditMedicalInfo}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-700/50 text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-300 text-sm"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </button>
+                )}
+              </div>
+
+              {isEditingMedicalInfo ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Blood Group</label>
+                    <select
+                      value={editedMedical.blood_group || ''}
+                      onChange={(e) => setEditedMedical({ ...editedMedical, blood_group: e.target.value })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    >
+                      <option value="">Select blood group</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Fitness Status</label>
+                    <select
+                      value={editedMedical.fitness_status || ''}
+                      onChange={(e) => setEditedMedical({ ...editedMedical, fitness_status: e.target.value as any })}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    >
+                      <option value="">Select status</option>
+                      <option value="excellent">Excellent</option>
+                      <option value="good">Good</option>
+                      <option value="recovering">Recovering</option>
+                      <option value="injured">Injured</option>
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm text-slate-400 mb-2">Injury History</label>
+                    <textarea
+                      value={editedMedical.injury_history || ''}
+                      onChange={(e) => setEditedMedical({ ...editedMedical, injury_history: e.target.value })}
+                      rows={3}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"
+                      placeholder="Describe any past injuries..."
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm text-slate-400 mb-2">Allergies</label>
+                    <textarea
+                      value={editedMedical.allergies || ''}
+                      onChange={(e) => setEditedMedical({ ...editedMedical, allergies: e.target.value })}
+                      rows={3}
+                      className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"
+                      placeholder="List any allergies..."
+                    />
+                  </div>
+                  <div className="sm:col-span-2 flex items-center gap-3 pt-4">
+                    <button
+                      onClick={handleSaveMedicalInfo}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-300"
+                    >
+                      <Save className="w-4 h-4" />
+                      Save Changes
+                    </button>
+                    <button
+                      onClick={handleCancelMedicalEdit}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 hover:text-white transition-all duration-300"
+                    >
+                      <X className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Activity className="w-5 h-5 text-red-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Blood Group</p>
+                      <p className="text-white font-medium">{profile.blood_group || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
+                    <Flame className="w-5 h-5 text-orange-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Fitness Status</p>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getFitnessStatusColor(profile.fitness_status)}`}>
+                        {profile.fitness_status ? profile.fitness_status.charAt(0).toUpperCase() + profile.fitness_status.slice(1) : 'Not set'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <div className="flex items-start gap-3 p-3 bg-slate-700/30 rounded-xl">
+                      <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-xs text-slate-400 mb-1">Injury History</p>
+                        <p className="text-white font-medium text-sm">{profile.injury_history || 'No injuries reported'}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <div className="flex items-start gap-3 p-3 bg-slate-700/30 rounded-xl">
+                      <AlertTriangle className="w-5 h-5 text-pink-400 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-xs text-slate-400 mb-1">Allergies</p>
+                        <p className="text-white font-medium text-sm">{profile.allergies || 'No allergies reported'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
           </div>
         </motion.div>
 
@@ -977,7 +1179,7 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.45 }}
           className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
         >
           {/* Performance Score Card */}
@@ -1097,7 +1299,7 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.55 }}
           className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 mb-8"
         >
           <div className="flex items-center gap-3 mb-6">
@@ -1151,7 +1353,7 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.65 }}
           className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6"
         >
           <div className="flex items-center gap-3 mb-6">
